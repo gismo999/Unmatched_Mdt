@@ -6,7 +6,6 @@
     <title>Modern Roleplay ePCR System</title>
     <style>
         :root {
-            /* Clean Dark Mode Palette */
             --bg-color: #f0f2f5; 
             --container-bg: #ffffff; 
             --text-color: #1c1e21; 
@@ -15,8 +14,9 @@
             --accent-hover: #166fe5;
             --border-color: #dddfe2; 
             --input-bg: #f5f6f7; 
+            --success-color: #28a745;
+            --danger-color: #dc3545;
             
-            /* Spacing and Borders */
             --radius: 8px;
             --space-xs: 8px;
             --space-s: 16px;
@@ -76,7 +76,6 @@
             gap: var(--space-s);
         }
 
-        /* Responsive grid adjustment */
         @media (max-width: 600px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -91,7 +90,7 @@
             color: var(--text-secondary);
         }
 
-        input, select, textarea {
+        input[type="text"], input[type="datetime-local"], select, textarea {
             width: 100%;
             padding: 12px;
             background-color: #ffffff; 
@@ -111,10 +110,10 @@
 
         textarea {
             resize: vertical;
-            height: 120px;
+            height: 100px;
         }
 
-        button {
+        button.primary-btn {
             width: 100%;
             padding: 16px;
             background-color: var(--accent-color);
@@ -128,22 +127,90 @@
             margin-top: var(--space-s);
         }
 
-        button:hover {
-            background-color: var(--accent-hover);
+        button.primary-btn:hover { background-color: var(--accent-hover); }
+        button.primary-btn:active { transform: translateY(1px); }
+
+        /* Meds Logger UI */
+        .meds-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border-radius: var(--radius);
+            border: 1px solid #b8daff;
+            cursor: pointer;
+            font-weight: bold;
+            color: #004085;
         }
 
-        button:active {
-            transform: translateY(1px);
+        .meds-toggle-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .meds-logger {
+            display: none;
+            margin-top: var(--space-s);
+            padding: var(--space-s);
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .meds-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .meds-input-row select {
+            flex-grow: 1;
+        }
+
+        button.add-med-btn {
+            padding: 0 20px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button.add-med-btn:hover { background-color: #218838; }
+
+        .logged-meds-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 15px 0 0 0;
+        }
+
+        .logged-meds-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.95em;
+        }
+
+        .delete-med {
+            color: var(--danger-color);
+            cursor: pointer;
+            font-weight: bold;
         }
         
-        /* Smooth reveal for the hidden section */
         #hiddenFields {
             display: none;
             animation: fadeIn 0.5s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -156,7 +223,7 @@
     <form id="epcrForm">
         <div class="form-section" style="text-align: center; border: none; background: transparent;">
             <label for="grade" style="font-size: 1.2em; color: var(--text-color); margin-bottom: var(--space-s);">Select Medic Grade to Begin</label>
-            <select id="grade" onchange="revealForm()" style="font-size: 1.1em; padding: 14px; max-width: 400px; margin: 0 auto;">
+            <select id="grade" onchange="revealFormAndPopulateMeds()" style="font-size: 1.1em; padding: 14px; max-width: 400px; margin: 0 auto;">
                 <option value="" disabled selected>-- Select Grade --</option>
                 <option value="Student Paramedic">Student Paramedic</option>
                 <option value="Paramedic">Paramedic</option>
@@ -212,23 +279,133 @@
                 <textarea id="injuryInfo" placeholder="Details of injuries sustained or chief complaint..."></textarea>
                 
                 <label for="treatmentNotes" style="margin-top: var(--space-s);">Treatment Notes</label>
-                <textarea id="treatmentNotes" placeholder="Details of care, medications provided, and overall narrative..."></textarea>
+                <textarea id="treatmentNotes" placeholder="Details of general care and interventions..."></textarea>
+
+                <div style="margin-top: var(--space-m);">
+                    <label class="meds-toggle-container">
+                        <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()">
+                        Medication Administered?
+                    </label>
+
+                    <div id="medsLoggerUI" class="meds-logger">
+                        <label for="medSelect">Select Medication (Filtered by your Grade)</label>
+                        <div class="meds-input-row">
+                            <select id="medSelect"></select>
+                            <button type="button" class="add-med-btn" onclick="logMedication()">Administer</button>
+                        </div>
+                        <ul id="loggedMedsList" class="logged-meds-list">
+                            </ul>
+                    </div>
+                </div>
             </div>
 
-            <button type="button" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
+            <button type="button" class="primary-btn" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
         </div>
     </form>
 </div>
 
 <script>
-    // Function to reveal the rest of the form when a grade is selected
-    function revealForm() {
+    // MEDICATION DATABASE based on uploaded images
+    const studentMeds = [
+        "Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine [Supervised] 15mg (TABLET)", 
+        "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", 
+        "Ipratropium Bromide 250mcg/3ml (NEB)", "Naproxen 250mg (TABLET)", "Paracetamol 1g (TABLET)", 
+        "Salbutamol 2.5mg/2.5ml (NEB)"
+    ];
+
+    const paraMeds = [
+        "Oxygen (GAS)", "Adrenaline 1mg/10ml (IV/IO)", "Amiodarone 300mg/10ml (IV/IO)", 
+        "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (IV/IO)", "Chlorphenamine 10mg/1ml (IV/IO)", 
+        "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", 
+        "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Metoclopramide 10mg/2ml (IV)", 
+        "Midazolam 5mg/5ml (IV/IO)", "Morphine Sulfate 10mg/1ml (IV/IO)", "Naloxone 400mcg/1ml (IV)", 
+        "Naloxone 400mcg/1ml (IM)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (IV)", 
+        "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", 
+        "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (IV/IO)"
+    ];
+
+    const advancedParaMeds = [...paraMeds, "Ketamine 10mg/1ml (IV/IO)"];
+    
+    const hemsMeds = [...advancedParaMeds, "Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"];
+    
+    const doctorMeds = [...hemsMeds, "Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"];
+
+    // Mapping grades to the lists
+    const gradeMedicationMap = {
+        "Student Paramedic": studentMeds,
+        "Paramedic": paraMeds,
+        "HART": paraMeds, // Assuming HART uses Para scope based on provided lists
+        "Advanced Paramedic": advancedParaMeds,
+        "HEMS": hemsMeds,
+        "Junior Doctor": doctorMeds, // Assuming Junior Doc uses Doc scope
+        "Doctor": doctorMeds
+    };
+
+    let administeredMedsArray = [];
+
+    function revealFormAndPopulateMeds() {
         const grade = document.getElementById('grade').value;
         const hiddenSection = document.getElementById('hiddenFields');
         
         if (grade !== "") {
             hiddenSection.style.display = "block";
+            
+            // Populate the dropdown based on grade
+            const medSelect = document.getElementById('medSelect');
+            medSelect.innerHTML = ""; // Clear existing
+            
+            // Sort medications alphabetically for easier finding
+            const availableMeds = gradeMedicationMap[grade].sort(); 
+            
+            availableMeds.forEach(med => {
+                const option = document.createElement('option');
+                option.value = med;
+                option.textContent = med;
+                medSelect.appendChild(option);
+            });
+
+            // Auto-open meds tab if already checked (when changing grades)
+            if(document.getElementById('medsToggle').checked) {
+                document.getElementById('medsLoggerUI').style.display = "block";
+            }
         }
+    }
+
+    function toggleMedsUI() {
+        const isChecked = document.getElementById('medsToggle').checked;
+        const medsUI = document.getElementById('medsLoggerUI');
+        medsUI.style.display = isChecked ? "block" : "none";
+    }
+
+    function logMedication() {
+        const medSelect = document.getElementById('medSelect');
+        const medName = medSelect.value;
+        if (!medName) return;
+
+        // Get current system time for timestamp
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        
+        const logEntry = `[${timeStr}] ${medName}`;
+        administeredMedsArray.push(logEntry);
+        
+        renderMedicationList();
+    }
+
+    function removeMedication(index) {
+        administeredMedsArray.splice(index, 1);
+        renderMedicationList();
+    }
+
+    function renderMedicationList() {
+        const listElement = document.getElementById('loggedMedsList');
+        listElement.innerHTML = ""; // clear UI
+
+        administeredMedsArray.forEach((med, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${med}</span> <span class="delete-med" onclick="removeMedication(${index})" title="Remove Entry">❌</span>`;
+            listElement.appendChild(li);
+        });
     }
 
     // Function to compile the text and copy to clipboard
@@ -243,6 +420,12 @@
         const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
         const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
 
+        // Format Medications for Output
+        let medsOutput = "None administered.";
+        if (document.getElementById('medsToggle').checked && administeredMedsArray.length > 0) {
+            medsOutput = administeredMedsArray.join('\n');
+        }
+
         // Format the text specifically for MDT pasting
         const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
 UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
@@ -253,6 +436,9 @@ PATIENT NAME: ${firstName} ${surname}
 
 --- INJURY INFORMATION ---
 ${injuryInfo}
+
+--- MEDICATIONS ADMINISTERED ---
+${medsOutput}
 
 --- TREATMENT NOTES ---
 ${treatmentNotes}
