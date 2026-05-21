@@ -122,30 +122,34 @@
 
 <script>
     const medMap = { 
-        "Student Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Aspirin (Heart attack) 300mg (TABLET)", "Codeine (Pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml", "GTN (Angina) 400mcg/spray", "Ibuprofen (Pain) 400mg", "Ipratropium Bromide (Asthma) 250mcg/3ml", "Naproxen (Musculoskeletal pain) 250mg", "Paracetamol (Pain) 1g", "Salbutamol (Asthma) 2.5mg/2.5ml"], 
-        "Paramedic": ["Adrenaline (Cardiac arrest) 1mg/10ml", "Amiodarone (Pulseless VT) 300mg/10ml", "Atropine Sulfate (Symptomatic <40 pulse) 600mcg", "Chlorphenamine (Allergic reaction) 10mg/1ml", "Metoclopramide (Nausea) 10mg/2ml", "Midazolam (Seizure) 5mg/5ml", "Morphine Sulfate (Pain) 10mg/1ml", "Naloxone (Overdose) 400mcg/1ml", "TXA (Trauma) 100mg/1ml"], 
-        "Advanced Paramedic": ["Ketamine (Severe pain) 10mg/1ml"], 
-        "HEMS": ["Amoxicillin (Infections) 500mg", "Rocuronium Bromide (RSI) 10mg/1ml"], 
-        "Doctor": ["Co-amoxiclav (Fractures) 1200mg", "Diazepam (Muscle spasms) 5mg"] 
+        "Student Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Aspirin (Heart attack) 300mg (TABLET)", "Codeine (Pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Angina) 400mcg/spray (INHALER)", "Ibuprofen (Pain) 400mg (TABLET)", "Ipratropium Bromide (Asthma) 250mcg/3ml (NEB)", "Naproxen (Pain) 250mg (TABLET)", "Paracetamol (Pain) 1g (TABLET)", "Salbutamol (Asthma) 2.5mg/2.5ml (NEB)"], 
+        "Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Adrenaline (Cardiac arrest) 1mg/10ml (INJ)", "Amiodarone (Pulseless VT) 300mg/10ml (INJ)", "Aspirin (Heart attack) 300mg (TABLET)", "Atropine Sulfate (Symptomatic <40 pulse) 600mcg (INJ)", "Chlorphenamine (Allergic reaction) 10mg/1ml (INJ)", "Codeine (Pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Angina) 400mcg/spray (INHALER)", "Ibuprofen (Pain) 400mg (TABLET)", "Ipratropium Bromide (Asthma) 250mcg/3ml (NEB)", "Metoclopramide (Nausea) 10mg/2ml (INJ)", "Midazolam (Seizure) 5mg/5ml (INJ)", "Morphine Sulfate (Pain) 10mg/1ml (INJ)", "Naloxone (Overdose) 400mcg/1ml (INJ)", "Naproxen (Pain) 250mg (TABLET)", "Paracetamol (Pain) 1000mg/100ml (INFUSION)", "Paracetamol (Pain) 1g (TABLET)", "Prednisolone (Asthma) 5mg (TABLET)", "Salbutamol (Asthma) 2.5mg/2.5ml (NEB)", "Sodium Chloride (Fluids) 500ml (INFUSION)", "TXA (Trauma) 100mg/1ml (INJ)"], 
+        "Advanced Paramedic": ["Ketamine (Severe pain) 10mg/1ml (INJ)"], 
+        "HEMS": ["Amoxicillin (Infections) 500mg (TABLET)", "Rocuronium Bromide (RSI) 10mg/1ml (INJ)"], 
+        "Doctor": ["Co-amoxiclav (Fractures) 1200mg (ORAL)", "Diazepam (Muscle spasms) 5mg (TABLET)"] 
     };
+    
+    // Add base/advanced lists to HEMS/Doctor categories
+    medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
+    medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
+    medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
+    medMap["HART"] = medMap["Paramedic"];
+    medMap["Junior Doctor"] = medMap["Doctor"];
+
     let meds = [], hart = [];
 
     function revealFormAndPopulateMeds() {
         const g = document.getElementById('grade').value;
         const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection')];
-        
-        // Color shifts
         if (g === "HEMS") sections.forEach(s => s.style.border = "2px solid #fab1a0");
         else if (g === "HART") sections.forEach(s => s.style.border = "2px solid #55efc4");
         else sections.forEach(s => s.style.border = "1px solid rgba(0,0,0,0.01)");
-
         document.getElementById('hiddenFields').style.display = "block";
         const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor");
         document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
         document.querySelectorAll('.hart-only').forEach(el => el.style.display = (g === "HART") ? "block" : "none");
-        
         const s = document.getElementById('medSelect'); s.innerHTML = "";
-        Object.keys(medMap).forEach(k => { if(g.includes(k)) medMap[k].forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); }); });
+        medMap[g].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
     }
 
     function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
