@@ -488,31 +488,22 @@
         });
     }
 
-    // Helper to get standard header info
-    function getHeaderInfo() {
+    // Copy INJURY data (Includes Time, Date, Callsign, Attendance, Scene Findings)
+    function copyInjuryMDT() {
         const grade = document.getElementById('grade').value;
         const callsign = document.getElementById('callsign').value || 'N/A';
         const date = document.getElementById('date').value || 'N/A';
         const attendance = document.getElementById('attendance').value;
         
-        let deployText = "";
-        if (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor") {
-            deployText = ` | DEPLOYMENT: ${document.getElementById('deployMethod').value}`;
-        }
-
-        return `UNIT: ${callsign} | GRADE: ${grade}${deployText} | DATE: ${date}\nATTENDANCE: ${attendance}\n`;
-    }
-
-    // Copy just the INJURY data
-    function copyInjuryMDT() {
-        const header = getHeaderInfo();
-        const grade = document.getElementById('grade').value;
         const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
         
+        let deployText = "";
         let sceneFindingsText = "";
+
         if (isHemsOrDoc) {
+            deployText = ` | DEPLOYMENT: ${document.getElementById('deployMethod').value}`;
             const findings = document.getElementById('sceneFindings').value || 'None detailed.';
-            sceneFindingsText = `\nSCENE FINDINGS:\n${findings}\n`;
+            sceneFindingsText = `\n\nSCENE FINDINGS:\n${findings}`;
         }
 
         const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
@@ -526,7 +517,9 @@
         const mriText = mriPerf === "Yes" ? `Yes - Findings: ${mriRes}` : "No";
 
         const output = `*** ePCR: INJURY REPORT ***
-${header}
+UNIT: ${callsign} | DATE: ${date}
+ATTENDANCE: ${attendance}${deployText}
+
 --- INJURY INFORMATION ---${sceneFindingsText}
 PRIMARY COMPLAINT:
 ${injuryInfo}
@@ -541,9 +534,8 @@ MRI PERFORMED: ${mriText}
         }).catch(err => console.error(err));
     }
 
-    // Copy just the TREATMENT data
+    // Copy TREATMENT data (Excludes Date, Time, Callsign, Attendance)
     function copyTreatmentMDT() {
-        const header = getHeaderInfo();
         const grade = document.getElementById('grade').value;
         const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
 
@@ -566,7 +558,8 @@ MRI PERFORMED: ${mriText}
         const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
 
         const output = `*** ePCR: TREATMENT REPORT ***
-${header}
+PROVIDER GRADE: ${grade}
+
 --- MEDICATIONS ADMINISTERED ---
 ${medsOutput}
 ${rsiText}
@@ -576,4 +569,9 @@ ${treatmentNotes}
 
         navigator.clipboard.writeText(output).then(() => {
             alert("TREATMENT data copied! Paste this into the Treatment section of your MDT.");
-        }).catch
+        }).catch(err => console.error(err));
+    }
+</script>
+
+</body>
+</html>
