@@ -29,6 +29,7 @@
         
         button.primary-btn { width: 100%; padding: 16px; background-color: var(--accent-color); color: white; border: none; border-radius: var(--radius-pill); font-weight: 700; cursor: pointer; margin-top: var(--space-m); }
         button.success-btn { background-color: var(--success-color); }
+        button.reset-btn { background-color: var(--danger-color); margin-top: 10px; }
         
         .meds-logger { display: none; margin-bottom: var(--space-m); padding: 24px; background-color: #ffffff; border: 2px dashed #bde0fe; border-radius: var(--radius-section); }
         .med-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end; }
@@ -113,13 +114,24 @@
 
                 <label>Treatment Notes</label><textarea id="treatmentNotes"></textarea>
                 <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT()">📋 Copy TREATMENT Section</button>
+                <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
             </div>
         </div>
     </form>
 </div>
 
 <script>
-    const medMap = { "Student Paramedic": ["Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml", "GTN 400mcg/spray", "Ibuprofen 400mg", "Ipratropium Bromide", "Naproxen 250mg", "Paracetamol 1g", "Salbutamol 2.5mg/2.5ml"], "Paramedic": ["Adrenaline 1mg/10ml", "Amiodarone 300mg/10ml", "Atropine Sulfate 600mcg", "Chlorphenamine 10mg/1ml", "Metoclopramide 10mg/2ml", "Midazolam 5mg/5ml", "Morphine Sulfate 10mg/1ml", "Naloxone 400mcg/1ml", "TXA 100mg/1ml"], "Advanced Paramedic": ["Ketamine 10mg/1ml"], "HEMS": ["Amoxicillin 500mg", "Rocuronium Bromide 10mg/1ml"], "Doctor": ["Co-amoxiclav 1200mg", "Diazepam 5mg"] };
+    const medsData = {
+        "Student Paramedic": ["Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine (supervised) 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Naproxen 250mg (TABLET)", "Paracetamol 1g (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)"],
+        "Paramedic": ["Oxygen (GAS)", "Adrenaline 1mg/10ml (INJ)", "Amiodarone 300mg/10ml (INJ)", "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (INJ)", "Chlorphenamine 10mg/1ml (INJ)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Metoclopramide 10mg/2ml (INJ)", "Midazolam 5mg/5ml (INJ)", "Morphine Sulfate 10mg/1ml (INJ)", "Naloxone 400mcg/1ml (INJ)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (INFUSION)", "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (INJ)"],
+        "Advanced Paramedic": ["Oxygen (GAS)", "Adrenaline 1mg/10ml (INJ)", "Amiodarone 300mg/10ml (INJ)", "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (INJ)", "Chlorphenamine 10mg/1ml (INJ)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Ketamine 10mg/1ml (INJ)", "Metoclopramide 10mg/2ml (INJ)", "Midazolam 5mg/5ml (INJ)", "Morphine Sulfate 10mg/1ml (INJ)", "Naloxone 400mcg/1ml (INJ)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (INFUSION)", "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (INJ)"],
+        "HEMS": ["Oxygen (GAS)", "Adrenaline 1mg/10ml (INJ)", "Amiodarone 300mg/10ml (INJ)", "Amoxicillin 500mg (TABLET)", "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (INJ)", "Chlorphenamine 10mg/1ml (INJ)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Ketamine 10mg/1ml (INJ)", "Metoclopramide 10mg/2ml (INJ)", "Midazolam 5mg/5ml (INJ)", "Morphine Sulfate 10mg/1ml (INJ)", "Naloxone 400mcg/1ml (INJ)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (INFUSION)", "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Rocuronium Bromide 10mg/1ml (INJ)", "Salbutamol 2.5mg/2.5ml (NEB)", "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (INJ)"],
+        "Doctor": ["Oxygen (GAS)", "Adrenaline 1mg/10ml (INJ)", "Amoxicillin 500mg (TABLET)", "Aspirin 300mg (TABLET)", "Chlorphenamine 10mg/1ml (INJ)", "Co-amoxiclav 1200mg (ORAL)", "Codeine 15mg (TABLET)", "Diazepam 5mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Ketamine 10mg/1ml (INJ)", "Metoclopramide 10mg/2ml (INJ)", "Midazolam 5mg/5ml (INJ)", "Morphine Sulfate 10mg/1ml (INJ)", "Naloxone 400mcg/1ml (INJ)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (INFUSION)", "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Rocuronium Bromide 10mg/1ml (INJ)", "Salbutamol 2.5mg/2.5ml (NEB)", "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (INJ)"]
+    };
+    // Map remaining grades
+    medsData["HART"] = medsData["Paramedic"];
+    medsData["Junior Doctor"] = medsData["Doctor"];
+
     let meds = [], hart = [];
 
     function revealFormAndPopulateMeds() {
@@ -129,7 +141,7 @@
         document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
         document.querySelectorAll('.hart-only').forEach(el => el.style.display = (g === "HART") ? "block" : "none");
         const s = document.getElementById('medSelect'); s.innerHTML = "";
-        Object.keys(medMap).forEach(k => { if(g.includes(k)) medMap[k].forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); }); });
+        medsData[g].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
     }
 
     function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
@@ -141,6 +153,8 @@
         l1.innerHTML = ""; meds.forEach((m, i) => l1.innerHTML += `<li>${m} <span class="delete-item" onclick="meds.splice(${i},1); render()">✖</span></li>`);
         l2.innerHTML = ""; hart.forEach((h, i) => l2.innerHTML += `<li>${h} <span class="delete-item" onclick="hart.splice(${i},1); render()">✖</span></li>`);
     }
+
+    function resetForm() { if(confirm("Clear entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; render(); revealFormAndPopulateMeds(); } }
 
     function copyInjuryMDT() {
         const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
