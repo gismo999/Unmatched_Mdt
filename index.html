@@ -226,7 +226,7 @@
         }
 
         .hems-doc-only {
-            display: none; /* Controlled by JS based on grade */
+            display: none;
             animation: fadeIn 0.4s ease-out;
         }
 
@@ -398,47 +398,64 @@
         "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (IV/IO)"
     ];
 
-    const advancedParaMeds = [...paraMeds, "Ketamine 10mg/1ml (IV/IO)"];
-    const hemsMeds = [...advancedParaMeds, "Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"];
-    const doctorMeds = [...hemsMeds, "Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"];
+    const advancedParaMeds = paraMeds.concat(["Ketamine 10mg/1ml (IV/IO)"]);
+    const hemsMeds = advancedParaMeds.concat(["Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"]);
+    const doctorMeds = hemsMeds.concat(["Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"]);
 
     const gradeMedicationMap = {
-        "Student Paramedic": studentMeds, "Paramedic": paraMeds, "HART": paraMeds,
-        "Advanced Paramedic": advancedParaMeds, "HEMS": hemsMeds,
-        "Junior Doctor": doctorMeds, "Doctor": doctorMeds
+        "Student Paramedic": studentMeds, 
+        "Paramedic": paraMeds, 
+        "HART": paraMeds,
+        "Advanced Paramedic": advancedParaMeds, 
+        "HEMS": hemsMeds,
+        "Junior Doctor": doctorMeds, 
+        "Doctor": doctorMeds
     };
 
     let administeredMedsArray = [];
 
+    // SAFE REVEAL FUNCTION
     function revealFormAndPopulateMeds() {
-        const grade = document.getElementById('grade').value;
-        const hiddenSection = document.getElementById('hiddenFields');
-        
-        if (grade !== "") {
-            hiddenSection.style.display = "block";
+        try {
+            const gradeSelect = document.getElementById('grade');
+            const hiddenSection = document.getElementById('hiddenFields');
+            const grade = gradeSelect.value;
             
-            // Toggle HEMS/Doc specific fields
-            const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
-            const advancedFields = document.querySelectorAll('.hems-doc-only');
-            advancedFields.forEach(el => {
-                el.style.display = isHemsOrDoc ? "block" : "none";
-            });
+            if (grade && grade !== "") {
+                // 1. Force the UI to show immediately
+                hiddenSection.style.display = "block";
+                
+                // 2. Toggle HEMS/Doc specific fields safely
+                const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
+                const advancedFields = document.querySelectorAll('.hems-doc-only');
+                for (let i = 0; i < advancedFields.length; i++) {
+                    advancedFields[i].style.display = isHemsOrDoc ? "block" : "none";
+                }
 
-            // Populate Meds
-            const medSelect = document.getElementById('medSelect');
-            medSelect.innerHTML = ""; 
-            
-            const availableMeds = gradeMedicationMap[grade].sort(); 
-            availableMeds.forEach(med => {
-                const option = document.createElement('option');
-                option.value = med;
-                option.textContent = med;
-                medSelect.appendChild(option);
-            });
+                // 3. Populate Meds safely using .slice() to prevent array corruption
+                const medSelect = document.getElementById('medSelect');
+                if (medSelect && gradeMedicationMap[grade]) {
+                    medSelect.innerHTML = ""; 
+                    const availableMeds = gradeMedicationMap[grade].slice().sort(); 
+                    for (let i = 0; i < availableMeds.length; i++) {
+                        const option = document.createElement('option');
+                        option.value = availableMeds[i];
+                        option.textContent = availableMeds[i];
+                        medSelect.appendChild(option);
+                    }
+                }
 
-            if(document.getElementById('medsToggle').checked) {
-                document.getElementById('medsLoggerUI').style.display = "block";
+                // 4. Ensure meds UI is synced if box is already checked
+                const medsToggle = document.getElementById('medsToggle');
+                const medsUI = document.getElementById('medsLoggerUI');
+                if (medsToggle && medsUI) {
+                    medsUI.style.display = medsToggle.checked ? "block" : "none";
+                }
             }
+        } catch (error) {
+            console.error("Error in reveal function:", error);
+            // Absolute fallback to make sure the form still appears
+            document.getElementById('hiddenFields').style.display = "block";
         }
     }
 
@@ -446,11 +463,7 @@
     function toggleHiddenDiv(selectId, detailsId) {
         const selectBox = document.getElementById(selectId).value;
         const detailsDiv = document.getElementById(detailsId);
-        if (selectBox === "Yes") {
-            detailsDiv.style.display = "block";
-        } else {
-            detailsDiv.style.display = "none";
-        }
+        detailsDiv.style.display = (selectBox === "Yes") ? "block" : "none";
     }
 
     // Toggle Meds UI
@@ -481,11 +494,11 @@
     function renderMedicationList() {
         const listElement = document.getElementById('loggedMedsList');
         listElement.innerHTML = ""; 
-        administeredMedsArray.forEach((med, index) => {
+        for (let i = 0; i < administeredMedsArray.length; i++) {
             const li = document.createElement('li');
-            li.innerHTML = `<span>${med}</span> <span class="delete-med" onclick="removeMedication(${index})" title="Remove Entry">❌</span>`;
+            li.innerHTML = `<span>${administeredMedsArray[i]}</span> <span class="delete-med" onclick="removeMedication(${i})" title="Remove Entry">❌</span>`;
             listElement.appendChild(li);
-        });
+        }
     }
 
     // Copy INJURY data (Includes Time, Date, Callsign, Attendance, Scene Findings)
@@ -531,7 +544,10 @@ MRI PERFORMED: ${mriText}
 
         navigator.clipboard.writeText(output).then(() => {
             alert("INJURY data copied! Paste this into the Injury section of your MDT.");
-        }).catch(err => console.error(err));
+        }).catch(err => {
+            console.error(err);
+            alert("Failed to copy. Try selecting the text manually.");
+        });
     }
 
     // Copy TREATMENT data (Excludes Date, Time, Callsign, Attendance)
@@ -569,7 +585,10 @@ ${treatmentNotes}
 
         navigator.clipboard.writeText(output).then(() => {
             alert("TREATMENT data copied! Paste this into the Treatment section of your MDT.");
-        }).catch(err => console.error(err));
+        }).catch(err => {
+            console.error(err);
+            alert("Failed to copy. Try selecting the text manually.");
+        });
     }
 </script>
 
