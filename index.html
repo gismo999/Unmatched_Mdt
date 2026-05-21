@@ -6,79 +6,55 @@
     <title>UHS ePCR System</title>
     <style>
         :root {
-            --bg-color: #f2f5f9; 
-            --container-bg: #ffffff; 
-            --text-color: #1e1f21; 
-            --text-secondary: #5a626b; 
-            --accent-color: #0d6efd; 
-            --accent-hover: #bde0fe;
-            --border-color: #dfe6e9; 
-            --input-bg: #f5f8fa; 
-            --success-color: #00b894;
-            --success-hover: #a1f9d9;
-            --danger-color: #dc3545;
-            --warning-color: #e67e22;
-            --radius-section: 30px;
-            --radius-input: 20px;
-            --radius-pill: 50px;
-            --space-xs: 8px;
-            --space-s: 16px;
-            --space-m: 24px;
-            --space-l: 32px;
+            --bg-color: #f2f5f9; --container-bg: #ffffff; --text-color: #1e1f21; --text-secondary: #5a626b; 
+            --accent-color: #0d6efd; --accent-hover: #bde0fe; --border-color: #dfe6e9; --input-bg: #f5f8fa; 
+            --success-color: #00b894; --success-hover: #a1f9d9; --danger-color: #dc3545; --warning-color: #e67e22; 
+            --radius-section: 30px; --radius-input: 20px; --radius-pill: 50px;
+            --space-s: 16px; --space-m: 24px; --space-l: 32px;
         }
 
-        body { font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: var(--space-m); line-height: 1.6; }
+        body { font-family: 'Nunito', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: var(--space-m); line-height: 1.6; }
         .container { max-width: 800px; margin: 0 auto; background-color: var(--container-bg); padding: 40px; border-radius: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.03); }
         .header { text-align: center; margin-bottom: var(--space-l); }
         .header-title-main { font-size: 2.2em; font-weight: 800; color: var(--text-color); margin-top: 15px; }
         .header-title-main span { color: white; background-color: var(--accent-color); padding: 2px 10px; border-radius: 5px; margin-right: 5px; }
-        .header-subtitle { font-size: 1.1em; color: var(--text-secondary); font-weight: 600; margin-top: 5px; }
         
-        h2 { color: var(--text-color); padding-bottom: 5px; margin-bottom: var(--space-s); font-size: 1.3em; font-weight: 700; }
+        h2 { color: var(--text-color); margin-bottom: var(--space-s); font-size: 1.3em; font-weight: 700; }
         .form-section { margin-bottom: var(--space-l); padding: 30px; background-color: #ffffff; border-radius: var(--radius-section); box-shadow: 0 8px 24px rgba(13, 110, 253, 0.04); border: 1px solid rgba(0,0,0,0.01); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
         
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95em; color: var(--text-secondary); margin-left: 5px; }
-        input[type="text"], input[type="time"], input[type="datetime-local"], select, textarea { width: 100%; padding: 14px 20px; background-color: var(--input-bg); border: 2px solid transparent; color: var(--text-color); border-radius: var(--radius-pill); box-sizing: border-box; font-size: 1em; font-weight: 500; transition: all 0.3s ease; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
-        textarea { border-radius: var(--radius-input); resize: vertical; height: 110px; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-hover); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1); }
+        input, select, textarea { width: 100%; padding: 14px 20px; background-color: var(--input-bg); border: 2px solid transparent; color: var(--text-color); border-radius: var(--radius-pill); box-sizing: border-box; font-size: 1em; font-weight: 500; transition: all 0.3s; }
+        textarea { border-radius: var(--radius-input); height: 110px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-hover); background-color: #ffffff; }
         
-        button.primary-btn { width: 100%; padding: 16px; background-color: var(--accent-color); color: white; border: none; border-radius: var(--radius-pill); font-size: 1.1em; font-weight: 700; cursor: pointer; transition: all 0.2s ease; margin-top: var(--space-m); box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2); }
-        button.primary-btn:hover { background-color: #0b5ed7; transform: translateY(-2px); }
+        button.primary-btn { width: 100%; padding: 16px; background-color: var(--accent-color); color: white; border: none; border-radius: var(--radius-pill); font-weight: 700; cursor: pointer; margin-top: var(--space-m); }
         button.success-btn { background-color: var(--success-color); }
         
-        .meds-toggle-container { display: flex; align-items: center; gap: 12px; padding: 16px 24px; background-color: #e3f2fd; border-radius: var(--radius-pill); cursor: pointer; font-weight: 700; color: var(--accent-color); margin-bottom: 20px; }
         .meds-logger { display: none; margin-bottom: var(--space-m); padding: 24px; background-color: #ffffff; border: 2px dashed #bde0fe; border-radius: var(--radius-section); }
-        .meds-input-row { display: flex; gap: 12px; }
-        button.add-med-btn { padding: 0 24px; background-color: var(--success-color); color: white; border: none; border-radius: var(--radius-pill); font-weight: 700; cursor: pointer; }
-        
-        .logged-meds-list { list-style-type: none; padding: 0; margin: 20px 0 0 0; }
-        .logged-meds-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background-color: var(--input-bg); margin-bottom: 8px; border-radius: var(--radius-input); font-family: monospace; font-weight: bold; }
-        .delete-med { color: var(--danger-color); cursor: pointer; font-size: 1.2em; }
+        .med-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; align-items: end; }
+        .logged-meds-list { list-style-type: none; padding: 0; margin-top: 20px; }
+        .logged-meds-list li { display: flex; justify-content: space-between; padding: 12px 20px; background-color: var(--input-bg); margin-bottom: 8px; border-radius: var(--radius-input); font-family: monospace; font-weight: bold; }
+        .delete-med { color: var(--danger-color); cursor: pointer; }
         
         #hiddenFields { display: none; }
         .hidden-detail-box { display: none; margin-top: 15px; padding: 20px; background-color: #f8f9fa; border-radius: var(--radius-input); }
         .hems-doc-only, .hart-only { display: none; }
-        .rsi-box { border: 2px solid #ffcccc; background-color: #fff8f8; padding: 24px; border-radius: var(--radius-section); margin-bottom: var(--space-m); }
-        .hart-box { border: 2px solid #fab1a0; background-color: #fffaf0; padding: 24px; border-radius: var(--radius-section); margin-bottom: var(--space-m); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="uhs.png" alt="UHS Logo" style="max-width: 250px; height: auto;">
-    </div>
+    <div style="text-align: center; margin-bottom: 20px;"><img src="uhs.png" alt="UHS Logo" style="max-width: 250px; height: auto;"></div>
     <div class="header">
         <div class="header-title-main"><span>UHS</span>Unmatched Ambulance Service ePCR</div>
         <div class="header-subtitle">UHS Foundation Trust | Dedicated Care Record</div>
     </div>
     
     <form id="epcrForm">
-        <div class="form-section" style="text-align: center; box-shadow: none; padding-top: 0;">
-            <label for="grade">Select Medic Grade to Begin</label>
-            <select id="grade" onchange="revealFormAndPopulateMeds()" style="max-width: 400px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div class="form-section" style="text-align: center; box-shadow: none;">
+            <label for="grade">Select Medic Grade</label>
+            <select id="grade" onchange="revealFormAndPopulateMeds()" style="max-width: 400px; margin: 0 auto;">
                 <option value="" disabled selected>-- Select Grade --</option>
                 <option value="Student Paramedic">Student Paramedic</option>
                 <option value="Paramedic">Paramedic</option>
@@ -94,48 +70,36 @@
             <div class="form-section">
                 <h2>Incident Details</h2>
                 <div class="grid-2">
-                    <div><label for="callsign">Unit / Call Sign</label><input type="text" id="callsign" placeholder="e.g. Medic 1"></div>
-                    <div><label for="date">Date & Time</label><input type="datetime-local" id="date"></div>
+                    <div><label>Unit / Call Sign</label><input type="text" id="callsign"></div>
+                    <div><label>Date & Time</label><input type="datetime-local" id="date"></div>
                 </div>
-                <div class="hems-doc-only" style="margin-top: var(--space-m);">
-                    <label for="deployMethod">Deployment Method</label>
-                    <select id="deployMethod"><option value="HEMS">HEMS (Helicopter)</option><option value="RRV">RRV (Rapid Response Vehicle)</option></select>
-                </div>
-                <div style="margin-top: var(--space-m);"><label for="attendance">Attendance Method</label><select id="attendance"><option value="Attended Scene">Attended Scene</option><option value="Self Presented">Self Presented</option></select></div>
+                <div class="hems-doc-only" style="margin-top:20px;"><label>Deployment Method</label><select id="deployMethod"><option value="HEMS">HEMS</option><option value="RRV">RRV</option></select></div>
             </div>
 
             <div class="form-section">
                 <h2>1. Injury Information</h2>
-                <div class="hems-doc-only" style="margin-bottom: var(--space-m);"><label for="sceneFindings">Scene Findings (HEMS/Doctor)</label><textarea id="sceneFindings"></textarea></div>
-                <label for="injuryInfo">Primary Injury Information / Chief Complaint</label><textarea id="injuryInfo"></textarea>
-                <div class="grid-2" style="margin-top: var(--space-m); padding: 24px; background-color: var(--input-bg); border-radius: var(--radius-section);">
-                    <div><label for="xraySelect">Was an X-Ray performed?</label><select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')" style="background-color: white;"><option value="No">No</option><option value="Yes">Yes</option></select><div id="xrayDetails" class="hidden-detail-box" style="background-color: white;"><label for="xrayResults">Were there any broken bones?</label><input type="text" id="xrayResults" style="background-color: var(--input-bg);"></div></div>
-                    <div><label for="mriSelect">Was an MRI performed?</label><select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')" style="background-color: white;"><option value="No">No</option><option value="Yes">Yes</option></select><div id="mriDetails" class="hidden-detail-box" style="background-color: white;"><label for="mriResults">Was anything found?</label><input type="text" id="mriResults" style="background-color: var(--input-bg);"></div></div>
+                <div class="hems-doc-only" style="margin-bottom:20px;"><label>Scene Findings</label><textarea id="sceneFindings"></textarea></div>
+                <label>Primary Injury / Complaint</label><textarea id="injuryInfo"></textarea>
+                <div class="grid-2" style="margin-top:20px; padding:20px; background:var(--input-bg); border-radius:var(--radius-section);">
+                    <div><label>X-Ray?</label><select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="xrayDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="xrayResults"></div></div>
+                    <div><label>MRI?</label><select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="mriDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="mriResults"></div></div>
                 </div>
                 <button type="button" class="primary-btn" onclick="copyInjuryMDT()">📋 Copy INJURY Section</button>
             </div>
 
             <div class="form-section">
                 <h2>2. Treatment & Medications</h2>
-                <label class="meds-toggle-container"><input type="checkbox" id="medsToggle" onchange="toggleMedsUI()"> Medication Administered?</label>
+                <label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="medsToggle" onchange="toggleMedsUI()" style="width:20px;"> Medication Administered?</label>
                 <div id="medsLoggerUI" class="meds-logger">
-                    <div class="meds-input-row"><select id="medSelect"></select><button type="button" class="add-med-btn" onclick="logMedication()">Administer</button></div>
+                    <div class="med-row">
+                        <div><label>Medication</label><select id="medSelect"></select></div>
+                        <div><label>Dosage</label><input type="text" id="medDose" placeholder="e.g. 5mg"></div>
+                        <div><label>Time</label><input type="time" id="medTime"></div>
+                        <button type="button" class="add-med-btn" onclick="logMedication()">Add</button>
+                    </div>
                     <ul id="loggedMedsList" class="logged-meds-list"></ul>
                 </div>
-
-                <div class="hart-only hart-box" style="margin-bottom: var(--space-m);">
-                    <label style="font-weight: 800;">Did you use specialized HART equipment?</label>
-                    <select id="hartEquipSelect" onchange="toggleHiddenDiv('hartEquipSelect', 'hartEquipDetails')" style="background-color: white;"><option value="No">No</option><option value="Yes">Yes</option></select>
-                    <div id="hartEquipDetails" class="hidden-detail-box" style="background-color: white;"><div class="meds-input-row"><select id="hartEquipDropdown" style="background-color: var(--input-bg);"><option value="Tripod">Tripod</option><option value="Basket Stretcher">Basket Stretcher</option><option value="MTFA Gear">MTFA Gear</option><option value="CBRN Gear">CBRN Gear</option><option value="Diving Gear">Diving Gear</option></select><button type="button" class="add-med-btn" style="background-color:var(--warning-color)" onclick="logHartEquipment()">Add Gear</button></div><ul id="loggedHartEquipList" class="logged-meds-list"></ul></div>
-                </div>
-
-                <div class="hems-doc-only rsi-box" style="margin-bottom: var(--space-m);">
-                    <label style="font-weight: 800;">Was a Rapid Sequence Intubation (RSI) performed?</label>
-                    <select id="rsiSelect" onchange="toggleHiddenDiv('rsiSelect', 'rsiDetails')" style="background-color: white;"><option value="No">No</option><option value="Yes">Yes</option></select>
-                    <div id="rsiDetails" class="hidden-detail-box" style="background-color: white;"><div class="grid-2"><div><label>Medications Used</label><input type="text" id="rsiMeds" style="background-color: #fff0f0;"></div><div><label>Time Completed</label><input type="time" id="rsiTime" style="background-color: #fff0f0;"></div></div></div>
-                </div>
-
-                <label for="treatmentNotes">Treatment Notes</label><textarea id="treatmentNotes"></textarea>
+                <label>Treatment Notes</label><textarea id="treatmentNotes"></textarea>
                 <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT()">📋 Copy TREATMENT Section</button>
             </div>
         </div>
@@ -143,44 +107,30 @@
 </div>
 
 <script>
-    const baseParaMeds = ["Oxygen (GAS)", "Adrenaline 1mg/10ml (IV/IO)", "Amiodarone 300mg/10ml (IV/IO)", "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (IV/IO)", "Chlorphenamine 10mg/1ml (IV/IO)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Metoclopramide 10mg/2ml (IV)", "Midazolam 5mg/5ml (IV/IO)", "Morphine Sulfate 10mg/1ml (IV/IO)", "Naloxone IV 400mcg/1ml (IV)", "Naloxone IM 400mcg/1ml (IM)", "Naproxen 250mg (TABLET)", "Paracetamol IV 1000mg/100ml (IV)", "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (IV/IO)"];
-    const studentMeds = ["Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Naproxen 250mg (TABLET)", "Paracetamol 1g (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)"];
-    const advParaMeds = baseParaMeds.concat(["Ketamine 10mg/1ml (IV/IO)"]);
-    const hemsMeds = advParaMeds.concat(["Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"]);
-    const doctorMeds = hemsMeds.concat(["Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"]);
-
-    const gradeMedicationMap = { "Student Paramedic": studentMeds, "Paramedic": baseParaMeds, "HART": baseParaMeds, "Advanced Paramedic": advParaMeds, "HEMS": hemsMeds, "Junior Doctor": doctorMeds, "Doctor": doctorMeds };
-    let administeredMedsArray = []; let usedHartEquipArray = [];
+    const medMap = { "Student Paramedic": ["Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine 15mg (TABLET)", "Glucose 50g/500ml", "GTN 400mcg/spray", "Ibuprofen 400mg", "Ipratropium Bromide", "Naproxen 250mg", "Paracetamol 1g", "Salbutamol 2.5mg/2.5ml"], "Paramedic": ["Adrenaline 1mg/10ml", "Amiodarone 300mg/10ml", "Atropine Sulfate 600mcg", "Chlorphenamine 10mg/1ml", "Metoclopramide 10mg/2ml", "Midazolam 5mg/5ml", "Morphine Sulfate 10mg/1ml", "Naloxone 400mcg/1ml", "TXA 100mg/1ml"], "Advanced Paramedic": ["Ketamine 10mg/1ml"], "HEMS": ["Amoxicillin 500mg", "Rocuronium Bromide 10mg/1ml"], "Doctor": ["Co-amoxiclav 1200mg", "Diazepam 5mg"] };
+    let meds = [];
 
     function revealFormAndPopulateMeds() {
-        const grade = document.getElementById('grade').value;
+        const g = document.getElementById('grade').value;
         document.getElementById('hiddenFields').style.display = "block";
-        const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
-        document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHemsOrDoc ? "block" : "none");
-        document.querySelectorAll('.hart-only').forEach(el => el.style.display = (grade === "HART") ? "block" : "none");
         const medSelect = document.getElementById('medSelect'); medSelect.innerHTML = "";
-        gradeMedicationMap[grade].sort().forEach(med => { const opt = document.createElement('option'); opt.value = med; opt.textContent = med; medSelect.appendChild(opt); });
+        Object.keys(medMap).forEach(k => { if(g.includes(k)) medMap[k].forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; medSelect.appendChild(o); }); });
     }
-
-    function toggleHiddenDiv(sId, dId) { document.getElementById(dId).style.display = (document.getElementById(sId).value === "Yes") ? "block" : "none"; }
+    function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
     function toggleMedsUI() { document.getElementById('medsLoggerUI').style.display = document.getElementById('medsToggle').checked ? "block" : "none"; }
-    function logMedication() { const m = document.getElementById('medSelect').value; const t = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); administeredMedsArray.push(`[${t}] ${m}`); renderMedicationList(); }
-    function renderMedicationList() { const l = document.getElementById('loggedMedsList'); l.innerHTML = ""; administeredMedsArray.forEach((m, i) => { const li = document.createElement('li'); li.innerHTML = `<span>${m}</span> <span class="delete-med" onclick="administeredMedsArray.splice(${i},1); renderMedicationList()">✖</span>`; l.appendChild(li); }); }
-    function logHartEquipment() { const e = document.getElementById('hartEquipDropdown').value; if (!usedHartEquipArray.includes(e)) { usedHartEquipArray.push(e); renderHartList(); } }
-    function renderHartList() { const l = document.getElementById('loggedHartEquipList'); l.innerHTML = ""; usedHartEquipArray.forEach((e, i) => { const li = document.createElement('li'); li.innerHTML = `<span>${e}</span> <span class="delete-med" onclick="usedHartEquipArray.splice(${i},1); renderHartList()">✖</span>`; l.appendChild(li); }); }
+    function logMedication() { meds.push(`[${document.getElementById('medTime').value}] ${document.getElementById('medSelect').value} (${document.getElementById('medDose').value})`); renderList(); }
+    function renderList() { const l = document.getElementById('loggedMedsList'); l.innerHTML = ""; meds.forEach((m, i) => l.innerHTML += `<li>${m} <span class="delete-med" onclick="meds.splice(${i},1); renderList()">✖</span></li>`); }
 
     function copyInjuryMDT() {
-        const h = `UNIT: ${document.getElementById('callsign').value} | DATE: ${document.getElementById('date').value}\nATTENDANCE: ${document.getElementById('attendance').value}`;
-        const s = (document.getElementById('grade').value.match(/HEMS|Doctor/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
-        const o = `*** ePCR: INJURY REPORT ***\n${h}${s}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${document.getElementById('xraySelect').value} (${document.getElementById('xrayResults').value})\nMRI: ${document.getElementById('mriSelect').value} (${document.getElementById('mriResults').value})`;
-        navigator.clipboard.writeText(o).then(() => alert("Injury data copied!"));
+        const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
+        const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | DATE: ${document.getElementById('date').value}\n\nPRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\nX-RAY: ${xray}\nMRI: ${mri}`;
+        navigator.clipboard.writeText(out).then(() => alert("Injury section copied!"));
     }
-    
+
     function copyTreatmentMDT() {
-        const rsi = (document.getElementById('rsiSelect').value === "Yes") ? `\n--- RSI ---\nMEDS: ${document.getElementById('rsiMeds').value}\nTIME: ${document.getElementById('rsiTime').value}` : "";
-        const hart = (usedHartEquipArray.length > 0) ? `\n--- HART EQUIPMENT ---\n${usedHartEquipArray.join(', ')}` : "";
-        const o = `*** ePCR: TREATMENT REPORT ***\nPROVIDER: ${document.getElementById('grade').value}${hart}\n--- MEDICATIONS ---\n${administeredMedsArray.join('\n')}${rsi}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
-        navigator.clipboard.writeText(o).then(() => alert("Treatment data copied!"));
+        const out = `*** ePCR: TREATMENT REPORT ***\nMEDICATIONS:\n${meds.join('\n')}\n\nNOTES:\n${document.getElementById('treatmentNotes').value}`;
+        navigator.clipboard.writeText(out).then(() => alert("Treatment section copied!"));
     }
 </script>
 </body>
