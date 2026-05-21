@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Roleplay ePCR System</title>
+    <title>UHS ePCR System</title>
     <style>
         :root {
-            /* Bubbly / Modern Color Palette */
-            --bg-color: #eef2f6; 
+            /* Bubbly / Modern Color Palette based on UHS identity */
+            --bg-color: #f2f5f9; 
             --container-bg: #ffffff; 
-            --text-color: #2d3436; 
-            --text-secondary: #636e72; 
-            --accent-color: #0984e3; 
-            --accent-hover: #74b9ff;
+            --text-color: #1e1f21; 
+            --text-secondary: #5a626b; 
+            --accent-color: #0d6efd; /* NHS Blue */
+            --accent-hover: #bde0fe;
             --border-color: #dfe6e9; 
             --input-bg: #f5f8fa; 
             --success-color: #00b894;
-            --success-hover: #55efc4;
-            --danger-color: #d63031;
+            --success-hover: #a1f9d9;
+            --danger-color: #dc3545;
             --warning-color: #e67e22; /* HART Orange */
             
             /* Bubble Radii */
@@ -47,18 +47,38 @@
             background-color: var(--container-bg);
             padding: 40px;
             border-radius: 40px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.03); 
             border: none;
         }
 
-        h1 {
+        /* UHS stylized header text title to mimic provided logo */
+        .header {
             text-align: center;
-            color: var(--text-color);
-            margin-top: 0;
             margin-bottom: var(--space-l);
+        }
+        
+        .header-title-main {
             font-size: 2.2em;
             font-weight: 800;
             letter-spacing: -0.5px;
+            color: var(--text-color);
+            margin-bottom: 0;
+        }
+        
+        .header-title-main span {
+            color: white;
+            background-color: #0d6efd; /* NHS Blue */
+            padding: 2px 10px;
+            border-radius: 5px;
+            font-weight: 900;
+            margin-right: 5px;
+        }
+        
+        .header-subtitle {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-top: 5px;
         }
 
         h2 {
@@ -75,8 +95,8 @@
             padding: 30px;
             background-color: #ffffff; 
             border-radius: var(--radius-section);
-            box-shadow: 0 8px 24px rgba(9, 132, 227, 0.04);
-            border: 1px solid rgba(0,0,0,0.02);
+            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.04);
+            border: 1px solid rgba(0,0,0,0.01);
         }
 
         .grid-2 {
@@ -111,7 +131,7 @@
             font-size: 1em;
             font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
         }
 
         textarea {
@@ -125,7 +145,7 @@
             font-size: 1em;
             font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
             resize: vertical;
             height: 110px;
         }
@@ -134,7 +154,7 @@
             outline: none;
             border-color: var(--accent-hover);
             background-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.1);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
         }
 
         button.primary-btn {
@@ -150,26 +170,26 @@
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: var(--space-m);
-            box-shadow: 0 8px 20px rgba(9, 132, 227, 0.2);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
         }
 
         button.primary-btn:hover { 
-            background-color: var(--accent-hover); 
+            background-color: #0b5ed7; /* NHS Darker Blue */
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(9, 132, 227, 0.3);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
         }
         button.primary-btn:active { 
             transform: translateY(1px); 
-            box-shadow: 0 4px 10px rgba(9, 132, 227, 0.2);
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
         }
 
         button.success-btn {
             background-color: var(--success-color);
-            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.2);
         }
         button.success-btn:hover {
-            background-color: var(--success-hover);
-            box-shadow: 0 12px 24px rgba(0, 184, 148, 0.3);
+            background-color: #00a081; /* NHS Darker Green */
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
         }
 
         /* Meds Logger UI */
@@ -203,7 +223,7 @@
             margin-bottom: var(--space-m);
             padding: 24px;
             background-color: #ffffff;
-            border: 2px dashed var(--accent-hover);
+            border: 2px dashed #bde0fe; /* NHS Light Blue */
             border-radius: var(--radius-section);
             animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -228,14 +248,14 @@
             transition: all 0.2s;
         }
         button.add-med-btn:hover { 
-            background-color: var(--success-hover); 
+            background-color: #00a081; /* NHS Darker Green */
             transform: scale(1.05);
         }
         button.add-hart-btn {
             background-color: var(--warning-color);
         }
         button.add-hart-btn:hover {
-            background-color: #d35400;
+            background-color: #d35400; /* Darker HART Orange */
         }
 
         .logged-meds-list {
@@ -296,15 +316,15 @@
 
         /* Specialized Boxes */
         .rsi-box {
-            border: 2px solid #ff7675;
-            background-color: #fff0f0;
+            border: 2px solid #ffcccc; /* Soft NHS Red */
+            background-color: #fff8f8;
         }
         .rsi-box label {
             color: #d63031;
         }
 
         .hart-box {
-            border: 2px solid #fab1a0;
+            border: 2px solid #fab1a0; /* NHS Light Orange */
             background-color: #fffaf0;
         }
         .hart-box label {
@@ -320,7 +340,10 @@
 <body>
 
 <div class="container">
-    <h1>Patient Care Record</h1>
+    <div class="header">
+        <div class="header-title-main"><span>UHS</span>Unmatched Ambulance Service ePCR</div>
+        <div class="header-subtitle">UHS Foundation Trust | Dedicated Care Record</div>
+    </div>
     
     <form id="epcrForm">
         <div class="form-section" style="text-align: center; box-shadow: none; padding-top: 0;">
@@ -438,6 +461,7 @@
                     <div id="hartEquipDetails" class="hidden-detail-box" style="background-color: white;">
                         <div class="meds-input-row">
                             <select id="hartEquipDropdown" style="background-color: var(--input-bg);">
+                                <option value="" disabled selected>-- Select Gear --</option>
                                 <option value="Tripod">Tripod</option>
                                 <option value="Basket Stretcher">Basket Stretcher</option>
                                 <option value="MTFA Gear">MTFA Gear</option>
@@ -483,41 +507,44 @@
 </div>
 
 <script>
-    // MEDICATION DATABASE
-    const studentMeds = [
-        "Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine [Supervised] 15mg (TABLET)", 
-        "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", 
-        "Ipratropium Bromide 250mcg/3ml (NEB)", "Naproxen 250mg (TABLET)", "Paracetamol 1g (TABLET)", 
-        "Salbutamol 2.5mg/2.5ml (NEB)"
-    ];
-
-    const paraMeds = [
+    // FULL MEDICATION DATABASE Transcribed from Images
+    // Includes Formulations and strengths
+    
+    // Base list common to most paramedic scopes
+    const baseParaMeds = [
         "Oxygen (GAS)", "Adrenaline 1mg/10ml (IV/IO)", "Amiodarone 300mg/10ml (IV/IO)", 
-        "Aspirin 300mg (TABLET)", "Atropine Sulfate 600mcg (IV/IO)", "Chlorphenamine 10mg/1ml (IV/IO)", 
+        "Aspirin 300mg (TABLET)", "Atropine Sulfate 600 micrograms (IV/IO)", "Chlorphenamine 10mg/1ml (IV/IO)", 
         "Codeine 15mg (TABLET)", "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", 
-        "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250mcg/3ml (NEB)", "Metoclopramide 10mg/2ml (IV)", 
-        "Midazolam 5mg/5ml (IV/IO)", "Morphine Sulfate 10mg/1ml (IV/IO)", "Naloxone 400mcg/1ml (IV)", 
-        "Naloxone 400mcg/1ml (IM)", "Naproxen 250mg (TABLET)", "Paracetamol 1000mg/100ml (IV)", 
-        "Paracetamol 1g (TABLET)", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", 
+        "Ibuprofen 400mg (TABLET)", "Ipratropium Bromide 250micrograms/3ml (NEB)", "Metoclopramide 10mg/2ml (IV)", 
+        "Midazolam 5mg/5ml (IV/IO)", "Morphine Sulfate 10mg/1ml (IV/IO)", "Naloxone IV 400micrograms/1ml (IV)", 
+        "Naloxone IM 400micrograms/1ml (IM)", "Naproxen 250mg (TABLET)", "Paracetamol IV 1000mg/100mls (IV)", 
+        "Paracetamol 1g (TABLET) - 500mg per tablet", "Prednisolone 5mg (TABLET)", "Salbutamol 2.5mg/2.5ml (NEB)", 
         "Sodium Chloride 500ml (INFUSION)", "TXA 100mg/1ml (IV/IO)"
     ];
 
-    const advancedParaMeds = paraMeds.concat(["Ketamine 10mg/1ml (IV/IO)"]);
-    const hemsMeds = advancedParaMeds.concat(["Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"]);
+    const studentMeds = [
+        "Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine [Supervised] 15mg (TABLET)", 
+        "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", 
+        "Ipratropium Bromide 250micrograms/3ml (NEB)", "Naproxen 250mg (TABLET)", 
+        "Paracetamol 1g (TABLET) - 500mg per tablet", "Salbutamol 2.5mg/2.5ml (NEB)"
+    ];
+
+    const advParaMeds = baseParaMeds.concat(["Ketamine 10mg/1ml (IV/IO)"]);
+    const hemsMeds = advParaMeds.concat(["Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"]);
     const doctorMeds = hemsMeds.concat(["Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"]);
 
     const gradeMedicationMap = {
         "Student Paramedic": studentMeds, 
-        "Paramedic": paraMeds, 
-        "HART": paraMeds,
-        "Advanced Paramedic": advancedParaMeds, 
+        "Paramedic": baseParaMeds, 
+        "HART": baseParaMeds,
+        "Advanced Paramedic": advParaMeds, 
         "HEMS": hemsMeds,
         "Junior Doctor": doctorMeds, 
         "Doctor": doctorMeds
     };
 
     let administeredMedsArray = [];
-    let usedHartEquipArray = []; // New array for HART gear
+    let usedHartEquipArray = []; 
 
     // SAFE REVEAL FUNCTION
     function revealFormAndPopulateMeds() {
@@ -543,6 +570,7 @@
                     hartFields[i].style.display = isHart ? "block" : "none";
                 }
 
+                // Populate Meds
                 const medSelect = document.getElementById('medSelect');
                 if (medSelect && gradeMedicationMap[grade]) {
                     medSelect.innerHTML = ""; 
@@ -614,6 +642,8 @@
         const equipDrop = document.getElementById('hartEquipDropdown');
         const equipName = equipDrop.value;
         
+        if (!equipName) return;
+
         // Prevent adding duplicates
         if (!usedHartEquipArray.includes(equipName)) {
             usedHartEquipArray.push(equipName);
@@ -648,6 +678,7 @@
         let deployText = "";
         let sceneFindingsText = "";
 
+        // Double newline for blank line space
         if (isHemsOrDoc) {
             deployText = ` | DEPLOYMENT: ${document.getElementById('deployMethod').value}`;
             const findings = document.getElementById('sceneFindings').value || 'None detailed.';
@@ -697,6 +728,7 @@ MRI PERFORMED: ${mriText}
         if (isHart) {
             const usedHart = document.getElementById('hartEquipSelect').value;
             if (usedHart === "Yes" && usedHartEquipArray.length > 0) {
+                // Formatting as single line for brevity in notes
                 hartText = `\n--- HART EQUIPMENT USED ---\n${usedHartEquipArray.join(', ')}\n`;
             }
         }
