@@ -15,6 +15,7 @@
             --border-color: #dddfe2; 
             --input-bg: #f5f6f7; 
             --success-color: #28a745;
+            --success-hover: #218838;
             --danger-color: #dc3545;
             
             --radius: 8px;
@@ -57,7 +58,7 @@
             border-bottom: 2px solid var(--border-color);
             padding-bottom: var(--space-xs);
             margin-top: 0;
-            margin-bottom: var(--space-m);
+            margin-bottom: var(--space-s);
             font-size: 1.25em;
             font-weight: 600;
         }
@@ -115,7 +116,7 @@
 
         button.primary-btn {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background-color: var(--accent-color);
             color: white;
             border: none;
@@ -124,11 +125,18 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s, transform 0.1s;
-            margin-top: var(--space-s);
+            margin-top: var(--space-m);
         }
 
         button.primary-btn:hover { background-color: var(--accent-hover); }
         button.primary-btn:active { transform: translateY(1px); }
+
+        button.success-btn {
+            background-color: var(--success-color);
+        }
+        button.success-btn:hover {
+            background-color: var(--success-hover);
+        }
 
         /* Meds Logger UI */
         .meds-toggle-container {
@@ -142,6 +150,7 @@
             cursor: pointer;
             font-weight: bold;
             color: #004085;
+            margin-bottom: 15px;
         }
 
         .meds-toggle-container input[type="checkbox"] {
@@ -152,7 +161,7 @@
 
         .meds-logger {
             display: none;
-            margin-top: var(--space-s);
+            margin-bottom: var(--space-m);
             padding: var(--space-s);
             background-color: #ffffff;
             border: 1px solid var(--border-color);
@@ -178,7 +187,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        button.add-med-btn:hover { background-color: #218838; }
+        button.add-med-btn:hover { background-color: var(--success-hover); }
 
         .logged-meds-list {
             list-style-type: none;
@@ -209,6 +218,13 @@
             animation: fadeIn 0.5s ease-out;
         }
 
+        .imaging-details {
+            display: none;
+            margin-top: 10px;
+            padding-left: 15px;
+            border-left: 3px solid var(--accent-color);
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -221,7 +237,7 @@
     <h1>Patient Care Record</h1>
     
     <form id="epcrForm">
-        <div class="form-section" style="text-align: center; border: none; background: transparent;">
+        <div class="form-section" style="text-align: center; border: none; background: transparent; padding-top: 0;">
             <label for="grade" style="font-size: 1.2em; color: var(--text-color); margin-bottom: var(--space-s);">Select Medic Grade to Begin</label>
             <select id="grade" onchange="revealFormAndPopulateMeds()" style="font-size: 1.1em; padding: 14px; max-width: 400px; margin: 0 auto;">
                 <option value="" disabled selected>-- Select Grade --</option>
@@ -274,38 +290,69 @@
             </div>
 
             <div class="form-section">
-                <h2>Clinical Record</h2>
-                <label for="injuryInfo">Injury Information</label>
-                <textarea id="injuryInfo" placeholder="Details of injuries sustained or chief complaint..."></textarea>
+                <h2>1. Injury Information</h2>
+                <label for="injuryInfo">Primary Injury Information / Chief Complaint</label>
+                <textarea id="injuryInfo" placeholder="Details of injuries sustained..."></textarea>
                 
-                <label for="treatmentNotes" style="margin-top: var(--space-s);">Treatment Notes</label>
-                <textarea id="treatmentNotes" placeholder="Details of general care and interventions..."></textarea>
-
-                <div style="margin-top: var(--space-m);">
-                    <label class="meds-toggle-container">
-                        <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()">
-                        Medication Administered?
-                    </label>
-
-                    <div id="medsLoggerUI" class="meds-logger">
-                        <label for="medSelect">Select Medication (Filtered by your Grade)</label>
-                        <div class="meds-input-row">
-                            <select id="medSelect"></select>
-                            <button type="button" class="add-med-btn" onclick="logMedication()">Administer</button>
+                <div class="grid-2" style="margin-top: var(--space-m); padding: 15px; background-color: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius);">
+                    <div>
+                        <label for="xraySelect">Was an X-Ray performed?</label>
+                        <select id="xraySelect" onchange="toggleImaging('xraySelect', 'xrayDetails')">
+                            <option value="No" selected>No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <div id="xrayDetails" class="imaging-details">
+                            <label for="xrayResults">Were there any broken bones?</label>
+                            <input type="text" id="xrayResults" placeholder="E.g. Fractured left tibia...">
                         </div>
-                        <ul id="loggedMedsList" class="logged-meds-list">
-                            </ul>
+                    </div>
+                    
+                    <div>
+                        <label for="mriSelect">Was an MRI performed?</label>
+                        <select id="mriSelect" onchange="toggleImaging('mriSelect', 'mriDetails')">
+                            <option value="No" selected>No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <div id="mriDetails" class="imaging-details">
+                            <label for="mriResults">Was anything found?</label>
+                            <input type="text" id="mriResults" placeholder="E.g. Torn ACL...">
+                        </div>
                     </div>
                 </div>
+
+                <button type="button" class="primary-btn" onclick="copyInjuryMDT()">📋 Copy INJURY Section to MDT</button>
             </div>
 
-            <button type="button" class="primary-btn" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
+            <div class="form-section">
+                <h2>2. Treatment & Medications</h2>
+                
+                <label class="meds-toggle-container">
+                    <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()">
+                    Medication Administered?
+                </label>
+
+                <div id="medsLoggerUI" class="meds-logger">
+                    <label for="medSelect">Select Medication (Filtered by your Grade)</label>
+                    <div class="meds-input-row">
+                        <select id="medSelect"></select>
+                        <button type="button" class="add-med-btn" onclick="logMedication()">Administer</button>
+                    </div>
+                    <ul id="loggedMedsList" class="logged-meds-list">
+                        </ul>
+                </div>
+
+                <label for="treatmentNotes" style="margin-top: var(--space-s);">Treatment Notes / Interventions</label>
+                <textarea id="treatmentNotes" placeholder="Details of general care, bandaging, transport details..."></textarea>
+
+                <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT()">📋 Copy TREATMENT Section to MDT</button>
+            </div>
+            
         </div>
     </form>
 </div>
 
 <script>
-    // MEDICATION DATABASE based on uploaded images
+    // MEDICATION DATABASE
     const studentMeds = [
         "Oxygen (GAS)", "Aspirin 300mg (TABLET)", "Codeine [Supervised] 15mg (TABLET)", 
         "Glucose 50g/500ml (INFUSION)", "GTN 400mcg/spray (INHALER)", "Ibuprofen 400mg (TABLET)", 
@@ -325,20 +372,13 @@
     ];
 
     const advancedParaMeds = [...paraMeds, "Ketamine 10mg/1ml (IV/IO)"];
-    
     const hemsMeds = [...advancedParaMeds, "Amoxicillin 500mg (TABLET)", "Rocuronium Bromide 10mg/1ml (IV/IO)"];
-    
     const doctorMeds = [...hemsMeds, "Co-amoxiclav 1200mg (ORAL)", "Diazepam 5mg (TABLET)"];
 
-    // Mapping grades to the lists
     const gradeMedicationMap = {
-        "Student Paramedic": studentMeds,
-        "Paramedic": paraMeds,
-        "HART": paraMeds, // Assuming HART uses Para scope based on provided lists
-        "Advanced Paramedic": advancedParaMeds,
-        "HEMS": hemsMeds,
-        "Junior Doctor": doctorMeds, // Assuming Junior Doc uses Doc scope
-        "Doctor": doctorMeds
+        "Student Paramedic": studentMeds, "Paramedic": paraMeds, "HART": paraMeds,
+        "Advanced Paramedic": advancedParaMeds, "HEMS": hemsMeds,
+        "Junior Doctor": doctorMeds, "Doctor": doctorMeds
     };
 
     let administeredMedsArray = [];
@@ -349,14 +389,10 @@
         
         if (grade !== "") {
             hiddenSection.style.display = "block";
-            
-            // Populate the dropdown based on grade
             const medSelect = document.getElementById('medSelect');
-            medSelect.innerHTML = ""; // Clear existing
+            medSelect.innerHTML = ""; 
             
-            // Sort medications alphabetically for easier finding
             const availableMeds = gradeMedicationMap[grade].sort(); 
-            
             availableMeds.forEach(med => {
                 const option = document.createElement('option');
                 option.value = med;
@@ -364,13 +400,24 @@
                 medSelect.appendChild(option);
             });
 
-            // Auto-open meds tab if already checked (when changing grades)
             if(document.getElementById('medsToggle').checked) {
                 document.getElementById('medsLoggerUI').style.display = "block";
             }
         }
     }
 
+    // Toggle logic for Imaging Questions
+    function toggleImaging(selectId, detailsId) {
+        const selectBox = document.getElementById(selectId).value;
+        const detailsDiv = document.getElementById(detailsId);
+        if (selectBox === "Yes") {
+            detailsDiv.style.display = "block";
+        } else {
+            detailsDiv.style.display = "none";
+        }
+    }
+
+    // Toggle Meds UI
     function toggleMedsUI() {
         const isChecked = document.getElementById('medsToggle').checked;
         const medsUI = document.getElementById('medsLoggerUI');
@@ -382,13 +429,11 @@
         const medName = medSelect.value;
         if (!medName) return;
 
-        // Get current system time for timestamp
         const now = new Date();
         const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
         
         const logEntry = `[${timeStr}] ${medName}`;
         administeredMedsArray.push(logEntry);
-        
         renderMedicationList();
     }
 
@@ -399,8 +444,7 @@
 
     function renderMedicationList() {
         const listElement = document.getElementById('loggedMedsList');
-        listElement.innerHTML = ""; // clear UI
-
+        listElement.innerHTML = ""; 
         administeredMedsArray.forEach((med, index) => {
             const li = document.createElement('li');
             li.innerHTML = `<span>${med}</span> <span class="delete-med" onclick="removeMedication(${index})" title="Remove Entry">❌</span>`;
@@ -408,49 +452,70 @@
         });
     }
 
-    // Function to compile the text and copy to clipboard
-    function generateAndCopy() {
+    // Helper to get standard header info
+    function getHeaderInfo() {
         const grade = document.getElementById('grade').value;
         const callsign = document.getElementById('callsign').value || 'N/A';
         const date = document.getElementById('date').value || 'N/A';
         const firstName = document.getElementById('firstName').value || 'Unknown';
         const surname = document.getElementById('surname').value || 'Unknown';
         const attendance = document.getElementById('attendance').value;
-        
+
+        return `UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
+ATTENDANCE: ${attendance}
+PATIENT NAME: ${firstName} ${surname}\n`;
+    }
+
+    // Copy just the INJURY data
+    function copyInjuryMDT() {
+        const header = getHeaderInfo();
         const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
+        
+        const xrayPerf = document.getElementById('xraySelect').value;
+        const xrayRes = document.getElementById('xrayResults').value || 'None noted.';
+        const xrayText = xrayPerf === "Yes" ? `Yes - Bones Broken: ${xrayRes}` : "No";
+
+        const mriPerf = document.getElementById('mriSelect').value;
+        const mriRes = document.getElementById('mriResults').value || 'None noted.';
+        const mriText = mriPerf === "Yes" ? `Yes - Findings: ${mriRes}` : "No";
+
+        const output = `*** ePCR: INJURY REPORT ***
+${header}
+--- INJURY INFORMATION ---
+${injuryInfo}
+
+--- IMAGING / SCANS ---
+X-RAY PERFORMED: ${xrayText}
+MRI PERFORMED: ${mriText}
+***********************************`;
+
+        navigator.clipboard.writeText(output).then(() => {
+            alert("INJURY data copied! Paste this into the Injury section of your MDT.");
+        }).catch(err => console.error(err));
+    }
+
+    // Copy just the TREATMENT data
+    function copyTreatmentMDT() {
+        const header = getHeaderInfo();
         const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
 
-        // Format Medications for Output
         let medsOutput = "None administered.";
         if (document.getElementById('medsToggle').checked && administeredMedsArray.length > 0) {
             medsOutput = administeredMedsArray.join('\n');
         }
 
-        // Format the text specifically for MDT pasting
-        const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
-UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
-
---- INCIDENT INFO ---
-ATTENDANCE: ${attendance}
-PATIENT NAME: ${firstName} ${surname}
-
---- INJURY INFORMATION ---
-${injuryInfo}
-
+        const output = `*** ePCR: TREATMENT REPORT ***
+${header}
 --- MEDICATIONS ADMINISTERED ---
 ${medsOutput}
 
 --- TREATMENT NOTES ---
 ${treatmentNotes}
-**************************************`;
+***********************************`;
 
-        // Copy to clipboard
-        navigator.clipboard.writeText(mdtFormat).then(() => {
-            alert("ePCR Data copied to clipboard! You can now paste it into your MDT.");
-        }).catch(err => {
-            alert("Failed to copy text. Your browser might block clipboard access.");
-            console.error(err);
-        });
+        navigator.clipboard.writeText(output).then(() => {
+            alert("TREATMENT data copied! Paste this into the Treatment section of your MDT.");
+        }).catch(err => console.error(err));
     }
 </script>
 
