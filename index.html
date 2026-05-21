@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleplay ePCR System</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --accent-color: #007bff;
+            --accent-hover: #0056b3;
+            --border-color: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h1, h2 {
+            text-align: center;
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .form-section {
+            margin-bottom: 25px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #2a2a2a;
+            border: 1px solid var(--border-color);
+            color: white;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ePCR / Patient Care Record</h1>
+    
+    <form id="epcrForm">
+        <!-- INCIDENT DETAILS -->
+        <div class="form-section">
+            <h2>Incident Details</h2>
+            <div class="grid-2">
+                <div>
+                    <label for="callsign">Unit / Call Sign</label>
+                    <input type="text" id="callsign" placeholder="e.g. Medic 1">
+                </div>
+                <div>
+                    <label for="date">Date & Time</label>
+                    <input type="datetime-local" id="date">
+                </div>
+            </div>
+        </div>
+
+        <!-- PATIENT DETAILS -->
+        <div class="form-section">
+            <h2>Patient Information</h2>
+            <div class="grid-2">
+                <div>
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" id="patientName" placeholder="First Last">
+                </div>
+                <div>
+                    <label for="dob">Date of Birth / Age</label>
+                    <input type="text" id="dob" placeholder="MM/DD/YYYY or Age">
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top: 15px;">
+                <div>
+                    <label for="chiefComplaint">Chief Complaint</label>
+                    <input type="text" id="chiefComplaint" placeholder="Why was EMS called?">
+                </div>
+                <div>
+                    <label for="location">Location found</label>
+                    <input type="text" id="location" placeholder="Street / Area">
+                </div>
+            </div>
+        </div>
+
+        <!-- VITALS -->
+        <div class="form-section">
+            <h2>Vitals</h2>
+            <div class="grid-3">
+                <div>
+                    <label for="hr">Heart Rate (BPM)</label>
+                    <input type="text" id="hr" placeholder="e.g. 80">
+                </div>
+                <div>
+                    <label for="bp">Blood Pressure</label>
+                    <input type="text" id="bp" placeholder="e.g. 120/80">
+                </div>
+                <div>
+                    <label for="rr">Resp. Rate</label>
+                    <input type="text" id="rr" placeholder="e.g. 16">
+                </div>
+                <div>
+                    <label for="spo2">SpO2 (%)</label>
+                    <input type="text" id="spo2" placeholder="e.g. 98%">
+                </div>
+                <div>
+                    <label for="gcs">GCS (3-15)</label>
+                    <input type="text" id="gcs" placeholder="e.g. 15">
+                </div>
+                <div>
+                    <label for="status">Patient Status</label>
+                    <select id="status">
+                        <option value="Stable">Stable</option>
+                        <option value="Guarded">Guarded</option>
+                        <option value="Unstable">Unstable</option>
+                        <option value="Critical">Critical</option>
+                        <option value="Deceased">Deceased (DOA)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- NARRATIVE & TREATMENT -->
+        <div class="form-section">
+            <h2>Narrative & Treatment</h2>
+            <label for="treatment">Treatments/Interventions Provided</label>
+            <textarea id="treatment" placeholder="IV Access, Meds given, Bandaging, etc."></textarea>
+            
+            <label for="narrative" style="margin-top: 15px;">Narrative / Incident Summary</label>
+            <textarea id="narrative" placeholder="Detailed account of the scene, patient condition, and transport..."></textarea>
+        </div>
+
+        <button type="button" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
+    </form>
+</div>
+
+<script>
+    function generateAndCopy() {
+        // Gather all inputs
+        const callsign = document.getElementById('callsign').value || 'N/A';
+        const date = document.getElementById('date').value || 'N/A';
+        const patientName = document.getElementById('patientName').value || 'John/Jane Doe';
+        const dob = document.getElementById('dob').value || 'N/A';
+        const chiefComplaint = document.getElementById('chiefComplaint').value || 'N/A';
+        const location = document.getElementById('location').value || 'N/A';
+        
+        const hr = document.getElementById('hr').value || 'N/A';
+        const bp = document.getElementById('bp').value || 'N/A';
+        const rr = document.getElementById('rr').value || 'N/A';
+        const spo2 = document.getElementById('spo2').value || 'N/A';
+        const gcs = document.getElementById('gcs').value || 'N/A';
+        const status = document.getElementById('status').value;
+        
+        const treatment = document.getElementById('treatment').value || 'None';
+        const narrative = document.getElementById('narrative').value || 'No narrative provided.';
+
+        // Format the text specifically for MDT pasting
+        const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
+UNIT: ${callsign} | DATE: ${date}
+LOCATION: ${location}
+
+--- PATIENT INFO ---
+NAME: ${patientName}
+DOB/AGE: ${dob}
+CHIEF COMPLAINT: ${chiefComplaint}
+
+--- VITALS & STATUS ---
+STATUS: ${status}
+HR: ${hr} | BP: ${bp} | RR: ${rr} | SpO2: ${spo2} | GCS: ${gcs}
+
+--- INTERVENTIONS ---
+${treatment}
+
+--- NARRATIVE ---
+${narrative}
+**************************************`;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(mdtFormat).then(() => {
+            alert("ePCR Data copied to clipboard! You can now paste it into your MDT.");
+        }).catch(err => {
+            alert("Failed to copy text. Your browser might block clipboard access.");
+            console.error(err);
+        });
+    }
+</script>
+
+</body>
+</html>
