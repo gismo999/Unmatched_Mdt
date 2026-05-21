@@ -96,10 +96,23 @@
         <!-- INCIDENT DETAILS -->
         <div class="form-section">
             <h2>Incident Details</h2>
-            <div class="grid-2">
+            <div class="grid-3">
                 <div>
                     <label for="callsign">Unit / Call Sign</label>
                     <input type="text" id="callsign" placeholder="e.g. Medic 1">
+                </div>
+                <div>
+                    <label for="grade">Medic Grade</label>
+                    <select id="grade">
+                        <option value="Not Specified" disabled selected>Select Grade...</option>
+                        <option value="Student Paramedic">Student Paramedic</option>
+                        <option value="Paramedic">Paramedic</option>
+                        <option value="Advanced Paramedic">Advanced Paramedic</option>
+                        <option value="HEMS">HEMS</option>
+                        <option value="HART">HART</option>
+                        <option value="Junior Doctor">Junior Doctor</option>
+                        <option value="Doctor">Doctor</option>
+                    </select>
                 </div>
                 <div>
                     <label for="date">Date & Time</label>
@@ -188,7 +201,9 @@
     function generateAndCopy() {
         // Gather all inputs
         const callsign = document.getElementById('callsign').value || 'N/A';
+        const grade = document.getElementById('grade').value;
         const date = document.getElementById('date').value || 'N/A';
+        
         const patientName = document.getElementById('patientName').value || 'John/Jane Doe';
         const dob = document.getElementById('dob').value || 'N/A';
         const chiefComplaint = document.getElementById('chiefComplaint').value || 'N/A';
@@ -206,7 +221,7 @@
 
         // Format the text specifically for MDT pasting
         const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
-UNIT: ${callsign} | DATE: ${date}
+UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
 LOCATION: ${location}
 
 --- PATIENT INFO ---
