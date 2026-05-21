@@ -3,93 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roleplay ePCR System</title>
+    <title>Modern Roleplay ePCR System</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --container-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --accent-color: #007bff;
-            --accent-hover: #0056b3;
-            --border-color: #333;
+            /* Clean Dark Mode Palette */
+            --bg-color: #f0f2f5; /* Light grey background for outside */
+            --container-bg: #ffffff; /* Clean white for the main form card */
+            --text-color: #1c1e21; /* Deep text color */
+            --text-secondary: #65676b; /* Subtler grey for labels */
+            --accent-color: #1877f2; /* Modern vibrant blue */
+            --accent-hover: #166fe5;
+            --border-color: #dddfe2; /* Light grey for borders */
+            --input-bg: #f5f6f7; /* Very light background for inputs */
+            
+            /* Spacing and Borders */
+            --radius: 8px;
+            --space-xs: 8px;
+            --space-s: 16px;
+            --space-m: 24px;
+            --space-l: 32px;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: var(--space-m);
+            line-height: 1.5;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             background-color: var(--container-bg);
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            padding: var(--space-l);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for definition */
+            border: 1px solid var(--border-color);
         }
-        h1, h2 {
+
+        h1 {
             text-align: center;
-            color: var(--accent-color);
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: var(--space-l);
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--text-color);
             border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: var(--space-xs);
+            margin-top: 0;
+            margin-bottom: var(--space-m);
+            font-size: 1.25em;
+            font-weight: 600;
         }
+
         .form-section {
-            margin-bottom: 25px;
+            margin-bottom: var(--space-l);
+            padding: var(--space-m);
+            background-color: var(--input-bg); /* Subtle differentiation */
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
         }
+
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: var(--space-s);
         }
+
+        /* Responsive grid adjustment */
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
             font-size: 0.9em;
+            color: var(--text-secondary);
         }
+
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            background-color: #2a2a2a;
+            padding: 12px;
+            background-color: #ffffff; /* Inputs remain white for clarity */
             border: 1px solid var(--border-color);
-            color: white;
-            border-radius: 4px;
+            color: var(--text-color);
+            border-radius: var(--radius);
             box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
         }
+
         textarea {
             resize: vertical;
-            height: 100px;
+            height: 120px;
         }
+
         button {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background-color: var(--accent-color);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--radius);
             font-size: 1.1em;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: var(--space-s);
         }
+
         button:hover {
             background-color: var(--accent-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
         }
         
         /* Smooth reveal for the hidden section */
         #hiddenFields {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.5s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -100,10 +154,9 @@
     <h1>Patient Care Record</h1>
     
     <form id="epcrForm">
-        <!-- MEDIC GRADE (Always visible) -->
-        <div class="form-section">
-            <label for="grade" style="font-size: 1.1em; text-align: center; margin-bottom: 10px;">Select Medic Grade to Begin</label>
-            <select id="grade" onchange="revealForm()" style="font-size: 1.1em; padding: 12px;">
+        <div class="form-section" style="text-align: center; border: none; background: transparent;">
+            <label for="grade" style="font-size: 1.2em; color: var(--text-color); margin-bottom: var(--space-s);">Select Medic Grade to Begin</label>
+            <select id="grade" onchange="revealForm()" style="font-size: 1.1em; padding: 14px; max-width: 400px; margin: 0 auto;">
                 <option value="" disabled selected>-- Select Grade --</option>
                 <option value="Student Paramedic">Student Paramedic</option>
                 <option value="Paramedic">Paramedic</option>
@@ -115,7 +168,6 @@
             </select>
         </div>
 
-        <!-- HIDDEN FIELDS (Revealed after grade selection) -->
         <div id="hiddenFields">
             
             <div class="form-section">
@@ -131,7 +183,7 @@
                     </div>
                 </div>
 
-                <div class="grid-2" style="margin-top: 15px;">
+                <div class="grid-2" style="margin-top: var(--space-s);">
                     <div>
                         <label for="firstName">Patient First Name</label>
                         <input type="text" id="firstName" placeholder="First Name">
@@ -142,7 +194,7 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 15px;">
+                <div style="margin-top: var(--space-s);">
                     <label for="attendance">Attendance Method</label>
                     <select id="attendance">
                         <option value="Attended Scene" selected>Attended Scene (Responded to Emergency)</option>
@@ -151,13 +203,12 @@
                 </div>
             </div>
 
-            <!-- NARRATIVE & TREATMENT -->
             <div class="form-section">
                 <h2>Narrative & Treatment</h2>
                 <label for="treatment">Treatments / Interventions Provided</label>
                 <textarea id="treatment" placeholder="Details of care provided..."></textarea>
                 
-                <label for="narrative" style="margin-top: 15px;">Narrative / Incident Summary</label>
+                <label for="narrative" style="margin-top: var(--space-s);">Narrative / Incident Summary</label>
                 <textarea id="narrative" placeholder="Detailed account of the incident..."></textarea>
             </div>
 
@@ -205,7 +256,7 @@ ${narrative}
 
         // Copy to clipboard
         navigator.clipboard.writeText(mdtFormat).then(() => {
-            alert("ePCR Data copied to clipboard! You can now paste it into the Qbox MDT.");
+            alert("ePCR Data copied to clipboard! You can now paste it into your MDT.");
         }).catch(err => {
             alert("Failed to copy text. Your browser might block clipboard access.");
             console.error(err);
