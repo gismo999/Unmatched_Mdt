@@ -7,14 +7,14 @@
     <style>
         :root {
             /* Clean Dark Mode Palette */
-            --bg-color: #f0f2f5; /* Light grey background for outside */
-            --container-bg: #ffffff; /* Clean white for the main form card */
-            --text-color: #1c1e21; /* Deep text color */
-            --text-secondary: #65676b; /* Subtler grey for labels */
-            --accent-color: #1877f2; /* Modern vibrant blue */
+            --bg-color: #f0f2f5; 
+            --container-bg: #ffffff; 
+            --text-color: #1c1e21; 
+            --text-secondary: #65676b; 
+            --accent-color: #1877f2; 
             --accent-hover: #166fe5;
-            --border-color: #dddfe2; /* Light grey for borders */
-            --input-bg: #f5f6f7; /* Very light background for inputs */
+            --border-color: #dddfe2; 
+            --input-bg: #f5f6f7; 
             
             /* Spacing and Borders */
             --radius: 8px;
@@ -39,7 +39,7 @@
             background-color: var(--container-bg);
             padding: var(--space-l);
             border-radius: var(--radius);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for definition */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
             border: 1px solid var(--border-color);
         }
 
@@ -65,7 +65,7 @@
         .form-section {
             margin-bottom: var(--space-l);
             padding: var(--space-m);
-            background-color: var(--input-bg); /* Subtle differentiation */
+            background-color: var(--input-bg); 
             border-radius: var(--radius);
             border: 1px solid var(--border-color);
         }
@@ -94,7 +94,7 @@
         input, select, textarea {
             width: 100%;
             padding: 12px;
-            background-color: #ffffff; /* Inputs remain white for clarity */
+            background-color: #ffffff; 
             border: 1px solid var(--border-color);
             color: var(--text-color);
             border-radius: var(--radius);
@@ -172,6 +172,7 @@
             
             <div class="form-section">
                 <h2>Incident & Patient Details</h2>
+                
                 <div class="grid-2">
                     <div>
                         <label for="callsign">Unit / Call Sign</label>
@@ -183,18 +184,20 @@
                     </div>
                 </div>
 
-                <div class="grid-2" style="margin-top: var(--space-s);">
-                    <div>
-                        <label for="firstName">Patient First Name</label>
-                        <input type="text" id="firstName" placeholder="First Name">
-                    </div>
-                    <div>
-                        <label for="surname">Patient Surname</label>
-                        <input type="text" id="surname" placeholder="Surname">
+                <div style="margin-top: 35px; padding-top: 25px; border-top: 1px solid var(--border-color);">
+                    <div class="grid-2">
+                        <div>
+                            <label for="firstName">Patient First Name</label>
+                            <input type="text" id="firstName" placeholder="First Name">
+                        </div>
+                        <div>
+                            <label for="surname">Patient Surname</label>
+                            <input type="text" id="surname" placeholder="Surname">
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-top: var(--space-s);">
+                <div style="margin-top: var(--space-m);">
                     <label for="attendance">Attendance Method</label>
                     <select id="attendance">
                         <option value="Attended Scene" selected>Attended Scene (Responded to Emergency)</option>
@@ -204,12 +207,12 @@
             </div>
 
             <div class="form-section">
-                <h2>Narrative & Treatment</h2>
-                <label for="treatment">Treatments / Interventions Provided</label>
-                <textarea id="treatment" placeholder="Details of care provided..."></textarea>
+                <h2>Clinical Record</h2>
+                <label for="injuryInfo">Injury Information</label>
+                <textarea id="injuryInfo" placeholder="Details of injuries sustained or chief complaint..."></textarea>
                 
-                <label for="narrative" style="margin-top: var(--space-s);">Narrative / Incident Summary</label>
-                <textarea id="narrative" placeholder="Detailed account of the incident..."></textarea>
+                <label for="treatmentNotes" style="margin-top: var(--space-s);">Treatment Notes</label>
+                <textarea id="treatmentNotes" placeholder="Details of care, medications provided, and overall narrative..."></textarea>
             </div>
 
             <button type="button" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
@@ -236,8 +239,9 @@
         const firstName = document.getElementById('firstName').value || 'Unknown';
         const surname = document.getElementById('surname').value || 'Unknown';
         const attendance = document.getElementById('attendance').value;
-        const treatment = document.getElementById('treatment').value || 'None';
-        const narrative = document.getElementById('narrative').value || 'No narrative provided.';
+        
+        const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
+        const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
 
         // Format the text specifically for MDT pasting
         const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
@@ -247,11 +251,11 @@ UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
 ATTENDANCE: ${attendance}
 PATIENT NAME: ${firstName} ${surname}
 
---- INTERVENTIONS ---
-${treatment}
+--- INJURY INFORMATION ---
+${injuryInfo}
 
---- NARRATIVE ---
-${narrative}
+--- TREATMENT NOTES ---
+${treatmentNotes}
 **************************************`;
 
         // Copy to clipboard
