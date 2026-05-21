@@ -42,11 +42,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
         label {
             display: block;
             margin-bottom: 5px;
@@ -68,7 +63,7 @@
         }
         textarea {
             resize: vertical;
-            height: 80px;
+            height: 100px;
         }
         button {
             width: 100%;
@@ -81,157 +76,125 @@
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.3s;
+            margin-top: 10px;
         }
         button:hover {
             background-color: var(--accent-hover);
+        }
+        
+        /* Smooth reveal for the hidden section */
+        #hiddenFields {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>ePCR / Patient Care Record</h1>
+    <h1>Patient Care Record</h1>
     
     <form id="epcrForm">
-        <!-- INCIDENT DETAILS -->
+        <!-- MEDIC GRADE (Always visible) -->
         <div class="form-section">
-            <h2>Incident Details</h2>
-            <div class="grid-3">
-                <div>
-                    <label for="callsign">Unit / Call Sign</label>
-                    <input type="text" id="callsign" placeholder="e.g. Medic 1">
-                </div>
-                <div>
-                    <label for="grade">Medic Grade</label>
-                    <select id="grade">
-                        <option value="Not Specified" disabled selected>Select Grade...</option>
-                        <option value="Student Paramedic">Student Paramedic</option>
-                        <option value="Paramedic">Paramedic</option>
-                        <option value="Advanced Paramedic">Advanced Paramedic</option>
-                        <option value="HEMS">HEMS</option>
-                        <option value="HART">HART</option>
-                        <option value="Junior Doctor">Junior Doctor</option>
-                        <option value="Doctor">Doctor</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="date">Date & Time</label>
-                    <input type="datetime-local" id="date">
-                </div>
-            </div>
+            <label for="grade" style="font-size: 1.1em; text-align: center; margin-bottom: 10px;">Select Medic Grade to Begin</label>
+            <select id="grade" onchange="revealForm()" style="font-size: 1.1em; padding: 12px;">
+                <option value="" disabled selected>-- Select Grade --</option>
+                <option value="Student Paramedic">Student Paramedic</option>
+                <option value="Paramedic">Paramedic</option>
+                <option value="Advanced Paramedic">Advanced Paramedic</option>
+                <option value="HEMS">HEMS</option>
+                <option value="HART">HART</option>
+                <option value="Junior Doctor">Junior Doctor</option>
+                <option value="Doctor">Doctor</option>
+            </select>
         </div>
 
-        <!-- PATIENT DETAILS -->
-        <div class="form-section">
-            <h2>Patient Information</h2>
-            <div class="grid-2">
-                <div>
-                    <label for="patientName">Patient Name</label>
-                    <input type="text" id="patientName" placeholder="First Last">
-                </div>
-                <div>
-                    <label for="dob">Date of Birth / Age</label>
-                    <input type="text" id="dob" placeholder="MM/DD/YYYY or Age">
-                </div>
-            </div>
-            <div class="grid-2" style="margin-top: 15px;">
-                <div>
-                    <label for="chiefComplaint">Chief Complaint</label>
-                    <input type="text" id="chiefComplaint" placeholder="Why was EMS called?">
-                </div>
-                <div>
-                    <label for="location">Location found</label>
-                    <input type="text" id="location" placeholder="Street / Area">
-                </div>
-            </div>
-        </div>
-
-        <!-- VITALS -->
-        <div class="form-section">
-            <h2>Vitals</h2>
-            <div class="grid-3">
-                <div>
-                    <label for="hr">Heart Rate (BPM)</label>
-                    <input type="text" id="hr" placeholder="e.g. 80">
-                </div>
-                <div>
-                    <label for="bp">Blood Pressure</label>
-                    <input type="text" id="bp" placeholder="e.g. 120/80">
-                </div>
-                <div>
-                    <label for="rr">Resp. Rate</label>
-                    <input type="text" id="rr" placeholder="e.g. 16">
-                </div>
-                <div>
-                    <label for="spo2">SpO2 (%)</label>
-                    <input type="text" id="spo2" placeholder="e.g. 98%">
-                </div>
-                <div>
-                    <label for="gcs">GCS (3-15)</label>
-                    <input type="text" id="gcs" placeholder="e.g. 15">
-                </div>
-                <div>
-                    <label for="status">Patient Status</label>
-                    <select id="status">
-                        <option value="Stable">Stable</option>
-                        <option value="Guarded">Guarded</option>
-                        <option value="Unstable">Unstable</option>
-                        <option value="Critical">Critical</option>
-                        <option value="Deceased">Deceased (DOA)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- NARRATIVE & TREATMENT -->
-        <div class="form-section">
-            <h2>Narrative & Treatment</h2>
-            <label for="treatment">Treatments/Interventions Provided</label>
-            <textarea id="treatment" placeholder="IV Access, Meds given, Bandaging, etc."></textarea>
+        <!-- HIDDEN FIELDS (Revealed after grade selection) -->
+        <div id="hiddenFields">
             
-            <label for="narrative" style="margin-top: 15px;">Narrative / Incident Summary</label>
-            <textarea id="narrative" placeholder="Detailed account of the scene, patient condition, and transport..."></textarea>
-        </div>
+            <div class="form-section">
+                <h2>Incident & Patient Details</h2>
+                <div class="grid-2">
+                    <div>
+                        <label for="callsign">Unit / Call Sign</label>
+                        <input type="text" id="callsign" placeholder="e.g. Medic 1">
+                    </div>
+                    <div>
+                        <label for="date">Date & Time</label>
+                        <input type="datetime-local" id="date">
+                    </div>
+                </div>
 
-        <button type="button" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
+                <div class="grid-2" style="margin-top: 15px;">
+                    <div>
+                        <label for="firstName">Patient First Name</label>
+                        <input type="text" id="firstName" placeholder="First Name">
+                    </div>
+                    <div>
+                        <label for="surname">Patient Surname</label>
+                        <input type="text" id="surname" placeholder="Surname">
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <label for="attendance">Attendance Method</label>
+                    <select id="attendance">
+                        <option value="Attended Scene" selected>Attended Scene (Responded to Emergency)</option>
+                        <option value="Self Presented">Self Presented (Walk-in / Brought in)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- NARRATIVE & TREATMENT -->
+            <div class="form-section">
+                <h2>Narrative & Treatment</h2>
+                <label for="treatment">Treatments / Interventions Provided</label>
+                <textarea id="treatment" placeholder="Details of care provided..."></textarea>
+                
+                <label for="narrative" style="margin-top: 15px;">Narrative / Incident Summary</label>
+                <textarea id="narrative" placeholder="Detailed account of the incident..."></textarea>
+            </div>
+
+            <button type="button" onclick="generateAndCopy()">Generate MDT Text & Copy to Clipboard</button>
+        </div>
     </form>
 </div>
 
 <script>
-    function generateAndCopy() {
-        // Gather all inputs
-        const callsign = document.getElementById('callsign').value || 'N/A';
+    // Function to reveal the rest of the form when a grade is selected
+    function revealForm() {
         const grade = document.getElementById('grade').value;
+        const hiddenSection = document.getElementById('hiddenFields');
+        
+        if (grade !== "") {
+            hiddenSection.style.display = "block";
+        }
+    }
+
+    // Function to compile the text and copy to clipboard
+    function generateAndCopy() {
+        const grade = document.getElementById('grade').value;
+        const callsign = document.getElementById('callsign').value || 'N/A';
         const date = document.getElementById('date').value || 'N/A';
-        
-        const patientName = document.getElementById('patientName').value || 'John/Jane Doe';
-        const dob = document.getElementById('dob').value || 'N/A';
-        const chiefComplaint = document.getElementById('chiefComplaint').value || 'N/A';
-        const location = document.getElementById('location').value || 'N/A';
-        
-        const hr = document.getElementById('hr').value || 'N/A';
-        const bp = document.getElementById('bp').value || 'N/A';
-        const rr = document.getElementById('rr').value || 'N/A';
-        const spo2 = document.getElementById('spo2').value || 'N/A';
-        const gcs = document.getElementById('gcs').value || 'N/A';
-        const status = document.getElementById('status').value;
-        
+        const firstName = document.getElementById('firstName').value || 'Unknown';
+        const surname = document.getElementById('surname').value || 'Unknown';
+        const attendance = document.getElementById('attendance').value;
         const treatment = document.getElementById('treatment').value || 'None';
         const narrative = document.getElementById('narrative').value || 'No narrative provided.';
 
         // Format the text specifically for MDT pasting
         const mdtFormat = `*** ELECTRONIC PATIENT CARE RECORD ***
 UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
-LOCATION: ${location}
 
---- PATIENT INFO ---
-NAME: ${patientName}
-DOB/AGE: ${dob}
-CHIEF COMPLAINT: ${chiefComplaint}
-
---- VITALS & STATUS ---
-STATUS: ${status}
-HR: ${hr} | BP: ${bp} | RR: ${rr} | SpO2: ${spo2} | GCS: ${gcs}
+--- INCIDENT INFO ---
+ATTENDANCE: ${attendance}
+PATIENT NAME: ${firstName} ${surname}
 
 --- INTERVENTIONS ---
 ${treatment}
@@ -242,7 +205,7 @@ ${narrative}
 
         // Copy to clipboard
         navigator.clipboard.writeText(mdtFormat).then(() => {
-            alert("ePCR Data copied to clipboard! You can now paste it into your MDT.");
+            alert("ePCR Data copied to clipboard! You can now paste it into the Qbox MDT.");
         }).catch(err => {
             alert("Failed to copy text. Your browser might block clipboard access.");
             console.error(err);
