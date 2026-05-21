@@ -91,7 +91,7 @@
             color: var(--text-secondary);
         }
 
-        input[type="text"], input[type="datetime-local"], select, textarea {
+        input[type="text"], input[type="time"], input[type="datetime-local"], select, textarea {
             width: 100%;
             padding: 12px;
             background-color: #ffffff; 
@@ -218,11 +218,16 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        .imaging-details {
+        .hidden-detail-box {
             display: none;
             margin-top: 10px;
             padding-left: 15px;
             border-left: 3px solid var(--accent-color);
+        }
+
+        .hems-doc-only {
+            display: none; /* Controlled by JS based on grade */
+            animation: fadeIn 0.4s ease-out;
         }
 
         @keyframes fadeIn {
@@ -254,7 +259,7 @@
         <div id="hiddenFields">
             
             <div class="form-section">
-                <h2>Incident & Patient Details</h2>
+                <h2>Incident Details</h2>
                 
                 <div class="grid-2">
                     <div>
@@ -267,20 +272,15 @@
                     </div>
                 </div>
 
-                <div style="margin-top: 35px; padding-top: 25px; border-top: 1px solid var(--border-color);">
-                    <div class="grid-2">
-                        <div>
-                            <label for="firstName">Patient First Name</label>
-                            <input type="text" id="firstName" placeholder="First Name">
-                        </div>
-                        <div>
-                            <label for="surname">Patient Surname</label>
-                            <input type="text" id="surname" placeholder="Surname">
-                        </div>
-                    </div>
+                <div class="hems-doc-only" style="margin-top: var(--space-m);">
+                    <label for="deployMethod">Deployment Method</label>
+                    <select id="deployMethod">
+                        <option value="HEMS" selected>HEMS (Helicopter)</option>
+                        <option value="RRV">RRV (Rapid Response Vehicle)</option>
+                    </select>
                 </div>
 
-                <div style="margin-top: var(--space-m);">
+                <div style="margin-top: var(--space-m); padding-top: 15px; border-top: 1px solid var(--border-color);">
                     <label for="attendance">Attendance Method</label>
                     <select id="attendance">
                         <option value="Attended Scene" selected>Attended Scene (Responded to Emergency)</option>
@@ -291,17 +291,23 @@
 
             <div class="form-section">
                 <h2>1. Injury Information</h2>
+
+                <div class="hems-doc-only" style="margin-bottom: var(--space-m);">
+                    <label for="sceneFindings">Scene Findings (HEMS/Doctor)</label>
+                    <textarea id="sceneFindings" placeholder="What did you find upon arrival at the scene?"></textarea>
+                </div>
+
                 <label for="injuryInfo">Primary Injury Information / Chief Complaint</label>
                 <textarea id="injuryInfo" placeholder="Details of injuries sustained..."></textarea>
                 
                 <div class="grid-2" style="margin-top: var(--space-m); padding: 15px; background-color: #ffffff; border: 1px solid var(--border-color); border-radius: var(--radius);">
                     <div>
                         <label for="xraySelect">Was an X-Ray performed?</label>
-                        <select id="xraySelect" onchange="toggleImaging('xraySelect', 'xrayDetails')">
+                        <select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')">
                             <option value="No" selected>No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <div id="xrayDetails" class="imaging-details">
+                        <div id="xrayDetails" class="hidden-detail-box">
                             <label for="xrayResults">Were there any broken bones?</label>
                             <input type="text" id="xrayResults" placeholder="E.g. Fractured left tibia...">
                         </div>
@@ -309,11 +315,11 @@
                     
                     <div>
                         <label for="mriSelect">Was an MRI performed?</label>
-                        <select id="mriSelect" onchange="toggleImaging('mriSelect', 'mriDetails')">
+                        <select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')">
                             <option value="No" selected>No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <div id="mriDetails" class="imaging-details">
+                        <div id="mriDetails" class="hidden-detail-box">
                             <label for="mriResults">Was anything found?</label>
                             <input type="text" id="mriResults" placeholder="E.g. Torn ACL...">
                         </div>
@@ -341,7 +347,28 @@
                         </ul>
                 </div>
 
-                <label for="treatmentNotes" style="margin-top: var(--space-s);">Treatment Notes / Interventions</label>
+                <div class="hems-doc-only" style="margin-bottom: var(--space-m); padding: 15px; background-color: #ffffff; border: 1px solid var(--danger-color); border-radius: var(--radius);">
+                    <label for="rsiSelect" style="color: var(--danger-color); font-weight: bold;">Was a Rapid Sequence Intubation (RSI) performed?</label>
+                    <select id="rsiSelect" onchange="toggleHiddenDiv('rsiSelect', 'rsiDetails')">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                    
+                    <div id="rsiDetails" class="hidden-detail-box" style="border-left-color: var(--danger-color);">
+                        <div class="grid-2">
+                            <div>
+                                <label for="rsiMeds">Medications Used</label>
+                                <input type="text" id="rsiMeds" placeholder="E.g. Ketamine, Rocuronium...">
+                            </div>
+                            <div>
+                                <label for="rsiTime">Time Completed</label>
+                                <input type="time" id="rsiTime">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="treatmentNotes">Treatment Notes / Interventions</label>
                 <textarea id="treatmentNotes" placeholder="Details of general care, bandaging, transport details..."></textarea>
 
                 <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT()">📋 Copy TREATMENT Section to MDT</button>
@@ -389,6 +416,15 @@
         
         if (grade !== "") {
             hiddenSection.style.display = "block";
+            
+            // Toggle HEMS/Doc specific fields
+            const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
+            const advancedFields = document.querySelectorAll('.hems-doc-only');
+            advancedFields.forEach(el => {
+                el.style.display = isHemsOrDoc ? "block" : "none";
+            });
+
+            // Populate Meds
             const medSelect = document.getElementById('medSelect');
             medSelect.innerHTML = ""; 
             
@@ -406,8 +442,8 @@
         }
     }
 
-    // Toggle logic for Imaging Questions
-    function toggleImaging(selectId, detailsId) {
+    // Generic Toggle logic for Yes/No hidden divs (Imaging & RSI)
+    function toggleHiddenDiv(selectId, detailsId) {
         const selectBox = document.getElementById(selectId).value;
         const detailsDiv = document.getElementById(detailsId);
         if (selectBox === "Yes") {
@@ -457,18 +493,28 @@
         const grade = document.getElementById('grade').value;
         const callsign = document.getElementById('callsign').value || 'N/A';
         const date = document.getElementById('date').value || 'N/A';
-        const firstName = document.getElementById('firstName').value || 'Unknown';
-        const surname = document.getElementById('surname').value || 'Unknown';
         const attendance = document.getElementById('attendance').value;
+        
+        let deployText = "";
+        if (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor") {
+            deployText = ` | DEPLOYMENT: ${document.getElementById('deployMethod').value}`;
+        }
 
-        return `UNIT: ${callsign} | GRADE: ${grade} | DATE: ${date}
-ATTENDANCE: ${attendance}
-PATIENT NAME: ${firstName} ${surname}\n`;
+        return `UNIT: ${callsign} | GRADE: ${grade}${deployText} | DATE: ${date}\nATTENDANCE: ${attendance}\n`;
     }
 
     // Copy just the INJURY data
     function copyInjuryMDT() {
         const header = getHeaderInfo();
+        const grade = document.getElementById('grade').value;
+        const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
+        
+        let sceneFindingsText = "";
+        if (isHemsOrDoc) {
+            const findings = document.getElementById('sceneFindings').value || 'None detailed.';
+            sceneFindingsText = `\nSCENE FINDINGS:\n${findings}\n`;
+        }
+
         const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
         
         const xrayPerf = document.getElementById('xraySelect').value;
@@ -481,7 +527,8 @@ PATIENT NAME: ${firstName} ${surname}\n`;
 
         const output = `*** ePCR: INJURY REPORT ***
 ${header}
---- INJURY INFORMATION ---
+--- INJURY INFORMATION ---${sceneFindingsText}
+PRIMARY COMPLAINT:
 ${injuryInfo}
 
 --- IMAGING / SCANS ---
@@ -497,27 +544,36 @@ MRI PERFORMED: ${mriText}
     // Copy just the TREATMENT data
     function copyTreatmentMDT() {
         const header = getHeaderInfo();
-        const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
+        const grade = document.getElementById('grade').value;
+        const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
+
+        // RSI Logic
+        let rsiText = "";
+        if (isHemsOrDoc) {
+            const rsiPerf = document.getElementById('rsiSelect').value;
+            if (rsiPerf === "Yes") {
+                const rMeds = document.getElementById('rsiMeds').value || 'Unknown';
+                const rTime = document.getElementById('rsiTime').value || 'Unknown';
+                rsiText = `\n--- RAPID SEQUENCE INTUBATION (RSI) ---\nPERFORMED: Yes\nMEDICATIONS: ${rMeds}\nTIME COMPLETED: ${rTime}\n`;
+            }
+        }
 
         let medsOutput = "None administered.";
         if (document.getElementById('medsToggle').checked && administeredMedsArray.length > 0) {
             medsOutput = administeredMedsArray.join('\n');
         }
 
+        const treatmentNotes = document.getElementById('treatmentNotes').value || 'No treatment notes provided.';
+
         const output = `*** ePCR: TREATMENT REPORT ***
 ${header}
 --- MEDICATIONS ADMINISTERED ---
 ${medsOutput}
-
+${rsiText}
 --- TREATMENT NOTES ---
 ${treatmentNotes}
 ***********************************`;
 
         navigator.clipboard.writeText(output).then(() => {
             alert("TREATMENT data copied! Paste this into the Treatment section of your MDT.");
-        }).catch(err => console.error(err));
-    }
-</script>
-
-</body>
-</html>
+        }).catch
