@@ -18,6 +18,7 @@
             --success-color: #00b894;
             --success-hover: #55efc4;
             --danger-color: #d63031;
+            --warning-color: #e67e22; /* HART Orange */
             
             /* Bubble Radii */
             --radius-section: 30px;
@@ -96,7 +97,7 @@
             font-weight: 600;
             font-size: 0.95em;
             color: var(--text-secondary);
-            margin-left: 5px; /* Indent slightly to match rounded inputs */
+            margin-left: 5px; 
         }
 
         input[type="text"], input[type="time"], input[type="datetime-local"], select {
@@ -105,7 +106,7 @@
             background-color: var(--input-bg); 
             border: 2px solid transparent;
             color: var(--text-color);
-            border-radius: var(--radius-pill); /* Pill shaped */
+            border-radius: var(--radius-pill); 
             box-sizing: border-box;
             font-size: 1em;
             font-weight: 500;
@@ -119,7 +120,7 @@
             background-color: var(--input-bg); 
             border: 2px solid transparent;
             color: var(--text-color);
-            border-radius: var(--radius-input); /* Less pill-shaped for textareas */
+            border-radius: var(--radius-input); 
             box-sizing: border-box;
             font-size: 1em;
             font-weight: 500;
@@ -230,6 +231,12 @@
             background-color: var(--success-hover); 
             transform: scale(1.05);
         }
+        button.add-hart-btn {
+            background-color: var(--warning-color);
+        }
+        button.add-hart-btn:hover {
+            background-color: #d35400;
+        }
 
         .logged-meds-list {
             list-style-type: none;
@@ -282,13 +289,26 @@
             animation: fadeIn 0.4s ease-out;
         }
 
-        /* Specialized RSI box */
+        .hart-only {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Specialized Boxes */
         .rsi-box {
             border: 2px solid #ff7675;
             background-color: #fff0f0;
         }
         .rsi-box label {
             color: #d63031;
+        }
+
+        .hart-box {
+            border: 2px solid #fab1a0;
+            background-color: #fffaf0;
+        }
+        .hart-box label {
+            color: #e17055;
         }
 
         @keyframes fadeIn {
@@ -408,6 +428,29 @@
                         </ul>
                 </div>
 
+                <div class="hart-only hart-box" style="margin-bottom: var(--space-m); padding: 24px; border-radius: var(--radius-section);">
+                    <label for="hartEquipSelect" style="font-weight: 800; font-size: 1.05em;">Did you use specialized HART equipment?</label>
+                    <select id="hartEquipSelect" onchange="toggleHiddenDiv('hartEquipSelect', 'hartEquipDetails')" style="background-color: white;">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                    
+                    <div id="hartEquipDetails" class="hidden-detail-box" style="background-color: white;">
+                        <div class="meds-input-row">
+                            <select id="hartEquipDropdown" style="background-color: var(--input-bg);">
+                                <option value="Tripod">Tripod</option>
+                                <option value="Basket Stretcher">Basket Stretcher</option>
+                                <option value="MTFA Gear">MTFA Gear</option>
+                                <option value="CBRN Gear">CBRN Gear</option>
+                                <option value="Diving Gear">Diving Gear</option>
+                            </select>
+                            <button type="button" class="add-med-btn add-hart-btn" onclick="logHartEquipment()">Add Gear</button>
+                        </div>
+                        <ul id="loggedHartEquipList" class="logged-meds-list">
+                            </ul>
+                    </div>
+                </div>
+
                 <div class="hems-doc-only rsi-box" style="margin-bottom: var(--space-m); padding: 24px; border-radius: var(--radius-section);">
                     <label for="rsiSelect" style="font-weight: 800; font-size: 1.05em;">Was a Rapid Sequence Intubation (RSI) performed?</label>
                     <select id="rsiSelect" onchange="toggleHiddenDiv('rsiSelect', 'rsiDetails')" style="background-color: white;">
@@ -474,6 +517,7 @@
     };
 
     let administeredMedsArray = [];
+    let usedHartEquipArray = []; // New array for HART gear
 
     // SAFE REVEAL FUNCTION
     function revealFormAndPopulateMeds() {
@@ -485,10 +529,18 @@
             if (grade && grade !== "") {
                 hiddenSection.style.display = "block";
                 
+                // Toggle HEMS/Doc fields
                 const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
                 const advancedFields = document.querySelectorAll('.hems-doc-only');
                 for (let i = 0; i < advancedFields.length; i++) {
                     advancedFields[i].style.display = isHemsOrDoc ? "block" : "none";
+                }
+
+                // Toggle HART fields
+                const isHart = (grade === "HART");
+                const hartFields = document.querySelectorAll('.hart-only');
+                for (let i = 0; i < hartFields.length; i++) {
+                    hartFields[i].style.display = isHart ? "block" : "none";
                 }
 
                 const medSelect = document.getElementById('medSelect');
@@ -522,7 +574,7 @@
         detailsDiv.style.display = (selectBox === "Yes") ? "block" : "none";
     }
 
-    // Toggle Meds UI
+    // MEDICATION LOGGER
     function toggleMedsUI() {
         const isChecked = document.getElementById('medsToggle').checked;
         const medsUI = document.getElementById('medsLoggerUI');
@@ -557,6 +609,33 @@
         }
     }
 
+    // HART EQUIPMENT LOGGER
+    function logHartEquipment() {
+        const equipDrop = document.getElementById('hartEquipDropdown');
+        const equipName = equipDrop.value;
+        
+        // Prevent adding duplicates
+        if (!usedHartEquipArray.includes(equipName)) {
+            usedHartEquipArray.push(equipName);
+            renderHartEquipmentList();
+        }
+    }
+
+    function removeHartEquipment(index) {
+        usedHartEquipArray.splice(index, 1);
+        renderHartEquipmentList();
+    }
+
+    function renderHartEquipmentList() {
+        const listElement = document.getElementById('loggedHartEquipList');
+        listElement.innerHTML = ""; 
+        for (let i = 0; i < usedHartEquipArray.length; i++) {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${usedHartEquipArray[i]}</span> <span class="delete-med" onclick="removeHartEquipment(${i})" title="Remove Entry" style="color:var(--warning-color);">✖</span>`;
+            listElement.appendChild(li);
+        }
+    }
+
     // Copy INJURY data 
     function copyInjuryMDT() {
         const grade = document.getElementById('grade').value;
@@ -569,13 +648,12 @@
         let deployText = "";
         let sceneFindingsText = "";
 
-        // Properly formatting the space between scene findings and primary complaint
         if (isHemsOrDoc) {
             deployText = ` | DEPLOYMENT: ${document.getElementById('deployMethod').value}`;
             const findings = document.getElementById('sceneFindings').value || 'None detailed.';
-            sceneFindingsText = `\nSCENE FINDINGS:\n${findings}\n\n`; // Double newline for spacing
+            sceneFindingsText = `\nSCENE FINDINGS:\n${findings}\n\n`; 
         } else {
-            sceneFindingsText = `\n`; // Just a standard single newline if no HEMS fields
+            sceneFindingsText = `\n`; 
         }
 
         const injuryInfo = document.getElementById('injuryInfo').value || 'None detailed.';
@@ -612,6 +690,16 @@ MRI PERFORMED: ${mriText}
     function copyTreatmentMDT() {
         const grade = document.getElementById('grade').value;
         const isHemsOrDoc = (grade === "HEMS" || grade === "Junior Doctor" || grade === "Doctor");
+        const isHart = (grade === "HART");
+
+        // HART Equipment Logic
+        let hartText = "";
+        if (isHart) {
+            const usedHart = document.getElementById('hartEquipSelect').value;
+            if (usedHart === "Yes" && usedHartEquipArray.length > 0) {
+                hartText = `\n--- HART EQUIPMENT USED ---\n${usedHartEquipArray.join(', ')}\n`;
+            }
+        }
 
         // RSI Logic
         let rsiText = "";
@@ -633,7 +721,7 @@ MRI PERFORMED: ${mriText}
 
         const output = `*** ePCR: TREATMENT REPORT ***
 PROVIDER GRADE: ${grade}
-
+${hartText}
 --- MEDICATIONS ADMINISTERED ---
 ${medsOutput}
 ${rsiText}
