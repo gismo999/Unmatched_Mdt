@@ -26,7 +26,6 @@
             margin: 0; padding: 20px; line-height: 1.5; 
         }
 
-        /* WIDENED CONTAINER */
         .container { 
             max-width: 1300px; margin: 0 auto; background: var(--glass-bg); 
             backdrop-filter: blur(15px); padding: 30px 40px; border-radius: var(--radius); 
@@ -43,30 +42,18 @@
             transition: border-color 0.3s ease;
         }
 
-        /* SIDE-BY-SIDE GRID FOR WIDER SCREENS */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            align-items: start;
-        }
-
-        @media (max-width: 950px) {
-            .main-grid { grid-template-columns: 1fr; }
-        }
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        @media (max-width: 950px) { .main-grid { grid-template-columns: 1fr; } }
 
         h2 { font-size: 1.2em; color: #1a1a1a; margin-top: 0; }
-
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.95em; color: #444; margin-left: 5px; }
-        
         input, select, textarea { 
             width: 100%; padding: 12px 18px; margin-top: 5px; border: 1px solid rgba(0,0,0,0.1);
             border-radius: 15px; background: rgba(255,255,255,0.6); font-size: 1em; color: #333;
         }
-
         textarea { height: 110px; resize: vertical; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-blue); background: #ffffff; }
 
@@ -136,7 +123,6 @@
             </div>
 
             <div class="main-grid">
-                
                 <div class="form-section" id="injurySection" style="margin-bottom: 0;">
                     <h2>1. Injury Information</h2>
                     <div class="hems-doc-only" style="margin-bottom:15px;"><label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea></div>
@@ -151,12 +137,10 @@
 
                 <div class="form-section" id="treatmentSection" style="margin-bottom: 0;">
                     <h2>2. Treatment & Medications</h2>
-                    
                     <label style="display:flex; align-items:center; gap:10px; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 15px;">
                         <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()" style="width:20px; margin: 0;"> 
                         Medication Administered?
                     </label>
-                    
                     <div id="medsLoggerUI" class="meds-logger">
                         <div class="med-row">
                             <div><label>Medication</label><select id="medSelect"></select></div>
@@ -198,66 +182,28 @@
 
                     <div class="critical-status-box">
                         <div class="grid-2" style="margin-bottom: 15px;">
-                            <div>
-                                <label>ROLE (Life Extinct)?</label>
-                                <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
-                                    <option value="No">No</option>
-                                    <option value="Yes">Yes</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Time</label>
-                                <input type="time" id="roleTime" style="background: white;">
-                            </div>
+                            <div><label>ROLE (Life Extinct)?</label><select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                            <div><label>Time</label><input type="time" id="roleTime" style="background: white;"></div>
                         </div>
-                        
                         <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
                             <div class="grid-2">
-                                <div>
-                                    <label>Patient Shocked?</label>
-                                    <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                                <div id="shockCountBox" style="display: none;">
-                                    <label>How many times?</label>
-                                    <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
-                                </div>
+                                <div><label>Patient Shocked?</label><select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                                <div id="shockCountBox" style="display: none;"><label>How many times?</label><input type="number" id="shockCount" min="1" placeholder="e.g. 3"></div>
                             </div>
                             <div class="grid-2" style="margin-top: 15px;">
-                                <div>
-                                    <label>Taken to Morgue?</label>
-                                    <select id="morgueSelect">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>Time</label>
-                                    <input type="time" id="morgueTime" style="background: white;">
-                                </div>
+                                <div><label>Taken to Morgue?</label><select id="morgueSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                                <div><label>Time</label><input type="time" id="morgueTime" style="background: white;"></div>
                             </div>
                         </div>
-
                         <div class="grid-2">
-                            <div>
-                                <label>Patient in Coma?</label>
-                                <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
-                            </div>
-                            <div>
-                                <label>Time</label>
-                                <input type="time" id="comaTime" style="background: white;">
-                            </div>
+                            <div><label>Patient in Coma?</label><select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                            <div><label>Time</label><input type="time" id="comaTime" style="background: white;"></div>
                         </div>
                     </div>
 
                     <label>Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
-                    
-                    <div class="grid-2">
-                        <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
-                        <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
-                    </div>
+                    <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
+                    <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
                 </div>
             </div>
         </div>
@@ -265,39 +211,63 @@
 </div>
 
 <script>
-    // --- ACCURATE MEDICATION DATABASE FROM IMAGES ---
     const medMap = { 
-        "Student Paramedic": [
-            "Oxygen (Cardiac arrest/trauma) (GAS)", 
-            "Aspirin (Suspected heart attack) 300mg (TABLET)", 
-            "Codeine [supervised] (Mild to severe pain) 15mg (TABLET)", 
-            "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", 
-            "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", 
-            "Ibuprofen (Mild to mod pain) 400mg (TABLET)", 
-            "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", 
-            "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", 
-            "Paracetamol (Mild to mod pain) 1g (TABLET)", 
-            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)"
-        ], 
-        "Paramedic": [
-            "Oxygen (Cardiac arrest/trauma) (GAS)", 
-            "Adrenaline (Cardiac arrest) 1mg/10ml (INJ)", 
-            "Amiodarone (Pulseless VT only) 300mg/10ml (INJ)", 
-            "Aspirin (Suspected heart attack) 300mg (TABLET)", 
-            "Atropine Sulfate (<40 pulse symptomatic) 600mcg (INJ)", 
-            "Chlorphenamine (Allergic reaction) 10mg/1ml (INJ)", 
-            "Codeine (Mild to severe pain) 15mg (TABLET)", 
-            "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", 
-            "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", 
-            "Ibuprofen (Mild to mod pain) 400mg (TABLET)", 
-            "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", 
-            "Metoclopramide (Nausea/vomiting) 10mg/2ml (INJ)", 
-            "Midazolam (Seizure control) 5mg/5ml (INJ)", 
-            "Morphine Sulfate (Moderate pain) 10mg/1ml (INJ)", 
-            "Naloxone IV (Drug overdose) 400mcg/1ml (INJ)", 
-            "Naloxone IM (Drug overdose) 400mcg/1ml (INJ)", 
-            "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", 
-            "Paracetamol IV (Mild to mod pain) 1000mg/100ml (INFUSION)", 
-            "Paracetamol (Mild to mod pain) 1g (TABLET)", 
-            "Prednisolone (Moderate acute asthma) 5mg (TABLET)", 
-            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB
+        "Student Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Aspirin (Suspected heart attack) 300mg (TABLET)", "Codeine [supervised] (Mild to severe pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", "Ibuprofen (Mild to mod pain) 400mg (TABLET)", "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", "Paracetamol (Mild to mod pain) 1g (TABLET)", "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)"], 
+        "Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Adrenaline (Cardiac arrest) 1mg/10ml (INJ)", "Amiodarone (Pulseless VT only) 300mg/10ml (INJ)", "Aspirin (Suspected heart attack) 300mg (TABLET)", "Atropine Sulfate (<40 pulse symptomatic) 600mcg (INJ)", "Chlorphenamine (Allergic reaction) 10mg/1ml (INJ)", "Codeine (Mild to severe pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", "Ibuprofen (Mild to mod pain) 400mg (TABLET)", "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", "Metoclopramide (Nausea/vomiting) 10mg/2ml (INJ)", "Midazolam (Seizure control) 5mg/5ml (INJ)", "Morphine Sulfate (Moderate pain) 10mg/1ml (INJ)", "Naloxone IV (Drug overdose) 400mcg/1ml (INJ)", "Naloxone IM (Drug overdose) 400mcg/1ml (INJ)", "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", "Paracetamol IV (Mild to mod pain) 1000mg/100ml (INFUSION)", "Paracetamol (Mild to mod pain) 1g (TABLET)", "Prednisolone (Moderate acute asthma) 5mg (TABLET)", "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)", "Sodium Chloride (Fluids) 500ml (INFUSION)", "TXA (Major trauma/blood control) 100mg/1ml (INJ)"], 
+        "Advanced Paramedic": ["Ketamine (Severe pain management) 10mg/1ml (INJ)"], 
+        "HEMS": ["Amoxicillin (Infections) 500mg (TABLET)", "Rocuronium Bromide (RSI Intubation) 10mg/1ml (INJ)"], 
+        "Doctor": ["Co-amoxiclav (Open fracture infections) 1200mg (ORAL)", "Diazepam (Acute muscle spasms) 5mg (TABLET)"] 
+    };
+    medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
+    medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
+    medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
+    medMap["HART"] = medMap["Advanced Paramedic"];
+    medMap["Junior Doctor"] = medMap["Doctor"];
+    medMap["Silver Command"] = medMap["Doctor"];
+    medMap["Gold Command"] = medMap["Doctor"];
+
+    let meds = [], hart = [], rsiLog = [];
+
+    function revealFormAndPopulateMeds() {
+        const g = document.getElementById('grade').value;
+        const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection'), document.getElementById('mainSection')];
+        let borderColor = "1px solid rgba(255,255,255,0.4)";
+        if (["Student Paramedic", "Paramedic", "Advanced Paramedic", "HEMS", "HART", "Junior Doctor", "Doctor", "Silver Command", "Gold Command"].includes(g)) {
+            const colors = {"Student Paramedic": "#74b9ff", "Paramedic": "#0984e3", "Advanced Paramedic": "#6c5ce7", "HEMS": "#ff7675", "HART": "#55efc4", "Junior Doctor": "#00cec9", "Doctor": "#e84393", "Silver Command": "#b2bec3", "Gold Command": "#fdcb6e"};
+            borderColor = "2px solid " + colors[g];
+        }
+        sections.forEach(s => s.style.border = borderColor);
+        document.getElementById('hiddenFields').style.display = "block";
+        const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor" || g === "Gold Command" || g === "Silver Command");
+        document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
+        document.querySelectorAll('.hart-only').forEach(el => el.style.display = (g === "HART" || g === "Gold Command" || g === "Silver Command") ? "block" : "none");
+        const s = document.getElementById('medSelect'); s.innerHTML = "";
+        medMap[g].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
+    }
+
+    function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
+    function toggleMedsUI() { document.getElementById('medsLoggerUI').style.display = document.getElementById('medsToggle').checked ? "block" : "none"; }
+    function logMedication() { meds.push(`[${document.getElementById('medTime').value}] ${document.getElementById('medSelect').value} (${document.getElementById('medDose').value})`); render(); }
+    function logHart() { hart.push(document.getElementById('hartEquipDropdown').value); render(); }
+    function logRsi() { rsiLog.push(`[${document.getElementById('rsiTimeInput').value}] ${document.getElementById('rsiMedSelect').value}`); render(); }
+    function render() {
+        const l1 = document.getElementById('loggedMedsList'), l2 = document.getElementById('loggedHartList'), l3 = document.getElementById('loggedRsiList');
+        l1.innerHTML = ""; meds.forEach((m, i) => l1.innerHTML += `<li>${m} <span class="delete-item" onclick="meds.splice(${i},1); render()">✖</span></li>`);
+        l2.innerHTML = ""; hart.forEach((h, i) => l2.innerHTML += `<li>${h} <span class="delete-item" onclick="hart.splice(${i},1); render()">✖</span></li>`);
+        l3.innerHTML = ""; rsiLog.forEach((r, i) => l3.innerHTML += `<li>${r} <span class="delete-item" onclick="rsiLog.splice(${i},1); render()">✖</span></li>`);
+    }
+    function resetForm() { if(confirm("Clear entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; rsiLog = []; render(); document.getElementById('hiddenFields').style.display = "none"; document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)"; } }
+    function copyInjuryMDT(btn) {
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${document.getElementById('grade').value} | DATE: ${document.getElementById('date').value}\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\nPRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${document.getElementById('xraySelect').value === "Yes" ? document.getElementById('xrayResults').value : "No"}\nMRI: ${document.getElementById('mriSelect').value === "Yes" ? document.getElementById('mriResults').value : "No"}`;
+        navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
+    }
+    function copyTreatmentMDT(btn) {
+        const rsi = (document.getElementById('rsiSelect').value === "Yes") ? `\n--- RSI ---\n${rsiLog.join('\n')}\n` : "";
+        const role = (document.getElementById('roleSelect').value === "Yes") ? `\nROLE (Life Extinct): Confirmed @ ${document.getElementById('roleTime').value} | Shocks: ${document.getElementById('shockSelect').value === "Yes" ? document.getElementById('shockCount').value : "None"} | Morgue: ${document.getElementById('morgueSelect').value}` : "";
+        const coma = (document.getElementById('comaSelect').value === "Yes") ? `\nCOMA: Confirmed @ ${document.getElementById('comaTime').value}` : "";
+        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${document.getElementById('callsign').value} | PROVIDER: ${document.getElementById('grade').value}\n--- MEDICATIONS ---\n${meds.join('\n')}${rsi}\n${role}${coma}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
+        navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
+    }
+</script>
+</body>
+</html>
