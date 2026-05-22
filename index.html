@@ -128,7 +128,7 @@
             <div class="main-grid">
                 <div class="form-section" id="injurySection" style="margin-bottom: 0;">
                     <h2>1. Injury Information</h2>
-                    <label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea>
+                    <div class="hems-doc-only" style="margin-bottom:15px;"><label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea></div>
                     <label>Primary Injury / Complaint</label><textarea id="injuryInfo" placeholder="Nature of illness/injury..."></textarea>
                     
                     <div style="margin-top:15px; padding:20px; background:var(--input-bg); border-radius:var(--radius);">
@@ -187,22 +187,57 @@
 
                     <div class="critical-status-box">
                         <div class="grid-2" style="margin-bottom: 15px;">
-                            <div><label>ROLE (Life Extinct)?</label><select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                            <div><label>Time</label><input type="time" id="roleTime" style="background: white;"></div>
+                            <div>
+                                <label>ROLE (Life Extinct)?</label>
+                                <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="roleTime" style="background: white;">
+                            </div>
                         </div>
+                        
                         <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
                             <div class="grid-2">
-                                <div><label>Patient Shocked?</label><select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                                <div id="shockCountBox" style="display: none;"><label>How many times?</label><input type="number" id="shockCount" min="1" placeholder="e.g. 3"></div>
+                                <div>
+                                    <label>Did you shock the patient?</label>
+                                    <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div id="shockCountBox" style="display: none;">
+                                    <label>How many times?</label>
+                                    <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
+                                </div>
                             </div>
                             <div class="grid-2" style="margin-top: 15px;">
-                                <div><label>Taken to Morgue?</label><select id="morgueSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                                <div><label>Time</label><input type="time" id="morgueTime" style="background: white;"></div>
+                                <div>
+                                    <label>Taken to Morgue?</label>
+                                    <select id="morgueSelect">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Time</label>
+                                    <input type="time" id="morgueTime" style="background: white;">
+                                </div>
                             </div>
                         </div>
+
                         <div class="grid-2">
-                            <div><label>Patient in Coma?</label><select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                            <div><label>Time</label><input type="time" id="comaTime" style="background: white;"></div>
+                            <div>
+                                <label>Patient Placed in Coma?</label>
+                                <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="comaTime" style="background: white;">
+                            </div>
                         </div>
                     </div>
 
@@ -261,16 +296,14 @@
     }
     function resetForm() { if(confirm("Clear entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; rsiLog = []; render(); document.getElementById('hiddenFields').style.display = "none"; document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)"; } }
     function copyInjuryMDT(btn) {
-        const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
-        const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${document.getElementById('grade').value} | DATE: ${document.getElementById('date').value}\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\nPRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${document.getElementById('grade').value} | DATE: ${document.getElementById('date').value}\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\nPRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${document.getElementById('xraySelect').value === "Yes" ? document.getElementById('xrayResults').value : "No"}\nMRI: ${document.getElementById('mriSelect').value === "Yes" ? document.getElementById('mriResults').value : "No"}`;
         navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
     }
     function copyTreatmentMDT(btn) {
-        const rsi = (document.getElementById('rsiSelect').value === "Yes") ? `\n--- RSI ADMINISTERED ---\n${rsiLog.join('\n')}\n` : "";
-        const role = (document.getElementById('roleSelect').value === "Yes") ? `\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value} | Shocks: ${document.getElementById('shockSelect').value === "Yes" ? document.getElementById('shockCount').value : "None"} | Morgue: ${document.getElementById('morgueSelect').value} @ ${document.getElementById('morgueTime').value}` : "";
+        const rsi = (document.getElementById('rsiSelect').value === "Yes") ? `\n\n--- RSI ADMINISTERED ---\n${rsiLog.join('\n')}` : "";
+        const role = (document.getElementById('roleSelect').value === "Yes") ? `\n\n--- CRITICAL STATUS ---\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value}\nSHOCKS DELIVERED: ${document.getElementById('shockSelect').value === "Yes" ? document.getElementById('shockCount').value : "No"}\nTAKEN TO MORGUE: ${document.getElementById('morgueSelect').value} @ ${document.getElementById('morgueTime').value}` : "";
         const coma = (document.getElementById('comaSelect').value === "Yes") ? `\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value}` : "";
-        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${document.getElementById('callsign').value} | PROVIDER: ${document.getElementById('grade').value}\n${(hart.length > 0) ? `\n--- HART EQUIPMENT ---\n${hart.join(', ')}\n` : ""}\n--- MEDICATIONS ---\n${meds.join('\n')}${rsi}${role}${coma}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
+        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${document.getElementById('callsign').value} | PROVIDER: ${document.getElementById('grade').value}\n${(hart.length > 0) ? `\n\n--- HART EQUIPMENT ---\n${hart.join(', ')}` : ""}\n\n--- MEDICATIONS ---\n${meds.length > 0 ? meds.join('\n') : "None"}${rsi}${role}${coma}\n\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
         navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
     }
 </script>
