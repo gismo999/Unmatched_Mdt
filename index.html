@@ -81,6 +81,7 @@
         
         .rsi-box { border: 2px solid #ff7675; padding: 20px; border-radius: 20px; margin-top: 15px; background: #fff8f8; }
         .hart-box { border: 2px solid #55efc4; padding: 20px; border-radius: 20px; margin-top: 15px; background: #f0fff4; }
+        .critical-status-box { background: rgba(0,0,0,0.03); padding: 20px; border-radius: 20px; margin-top: 15px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -177,7 +178,30 @@
                     </div>
                 </div>
 
-                <label style="margin-top: 15px;">Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
+                <div class="critical-status-box">
+                    <div class="grid-2" style="margin-bottom: 15px;">
+                        <div>
+                            <label>ROLE (Recognition of Life Extinct)?</label>
+                            <select id="roleSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
+                        </div>
+                        <div>
+                            <label>Time</label>
+                            <input type="time" id="roleTime" style="background: white;">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div>
+                            <label>Patient Placed in Coma?</label>
+                            <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
+                        </div>
+                        <div>
+                            <label>Time</label>
+                            <input type="time" id="comaTime" style="background: white;">
+                        </div>
+                    </div>
+                </div>
+
+                <label>Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
                 <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT()">📋 Copy TREATMENT Section</button>
                 <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
             </div>
@@ -242,10 +266,10 @@
     medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
     medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
     medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
-    medMap["HART"] = medMap["Advanced Paramedic"]; // HART gets Advanced Paramedic meds
+    medMap["HART"] = medMap["Advanced Paramedic"];
     medMap["Junior Doctor"] = medMap["Doctor"];
-    medMap["Silver Command"] = medMap["Doctor"];   // Silver Command gets all medications
-    medMap["Gold Command"] = medMap["Doctor"];     // Gold Command gets all medications
+    medMap["Silver Command"] = medMap["Doctor"];
+    medMap["Gold Command"] = medMap["Doctor"];
 
     let meds = [], hart = [], rsiLog = [];
 
@@ -263,7 +287,7 @@
 
         document.getElementById('hiddenFields').style.display = "block";
         
-        // Display toggles (Command roles see everything)
+        // Display toggles
         const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor" || g === "Gold Command" || g === "Silver Command");
         document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
         
@@ -333,7 +357,19 @@
         }
 
         const hEq = (hart.length > 0) ? `\n--- HART EQUIPMENT ---\n${hart.join(', ')}\n` : "";
-        const out = `*** ePCR: TREATMENT REPORT ***\nPROVIDER: ${document.getElementById('grade').value}\n${hEq}\n--- MEDICATIONS ---\n${meds.join('\n')}\n${rsiText}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
+        
+        // Critical Status Additions
+        let roleText = "";
+        if (document.getElementById('roleSelect').value === "Yes") {
+            roleText = `\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value || "Unknown Time"}\n`;
+        }
+
+        let comaText = "";
+        if (document.getElementById('comaSelect').value === "Yes") {
+            comaText = `\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value || "Unknown Time"}\n`;
+        }
+
+        const out = `*** ePCR: TREATMENT REPORT ***\nPROVIDER: ${document.getElementById('grade').value}\n${hEq}\n--- MEDICATIONS ---\n${meds.join('\n')}\n${rsiText}${roleText}${comaText}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
         navigator.clipboard.writeText(out).then(() => alert("Treatment section copied to clipboard!"));
     }
 </script>
