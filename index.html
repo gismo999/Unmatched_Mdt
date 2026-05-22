@@ -26,14 +26,15 @@
             margin: 0; padding: 20px; line-height: 1.5; 
         }
 
+        /* WIDENED CONTAINER */
         .container { 
-            max-width: 800px; margin: 0 auto; background: var(--glass-bg); 
-            backdrop-filter: blur(15px); padding: 40px; border-radius: var(--radius); 
+            max-width: 1300px; margin: 0 auto; background: var(--glass-bg); 
+            backdrop-filter: blur(15px); padding: 30px 40px; border-radius: var(--radius); 
             box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3);
             position: relative;
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
+        .header { text-align: center; margin-bottom: 20px; }
         .header-title-main { font-size: 1.8em; font-weight: 800; color: #1a1a1a; margin-top: 10px; }
 
         .form-section { 
@@ -42,12 +43,24 @@
             transition: border-color 0.3s ease;
         }
 
+        /* SIDE-BY-SIDE GRID FOR WIDER SCREENS */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 950px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
         h2 { font-size: 1.2em; color: #1a1a1a; margin-top: 0; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
 
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95em; color: #444; margin-left: 5px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.95em; color: #444; margin-left: 5px; }
         
         input, select, textarea { 
             width: 100%; padding: 12px 18px; margin-top: 5px; border: 1px solid rgba(0,0,0,0.1);
@@ -93,7 +106,7 @@
     </div>
     
     <form id="epcrForm">
-        <div class="form-section" id="mainSection" style="background: rgba(255,255,255,0.8);">
+        <div class="form-section" id="mainSection" style="background: rgba(255,255,255,0.8); margin-bottom: 20px;">
             <label style="text-align: center; font-size: 1.1em;">Select Medic Grade</label>
             <select id="grade" onchange="revealFormAndPopulateMeds()" style="max-width: 400px; display: block; margin: 0 auto; background: white;">
                 <option value="" disabled selected>-- Choose Grade --</option>
@@ -116,127 +129,136 @@
                     <div><label>Unit / Call Sign</label><input type="text" id="callsign" placeholder="e.g. Medic 1"></div>
                     <div><label>Date & Time</label><input type="datetime-local" id="date"></div>
                 </div>
-                <div class="hems-doc-only" style="margin-top:15px;"><label>Deployment Method</label><select id="deployMethod"><option value="HEMS">HEMS (Helicopter)</option><option value="RRV">RRV (Car)</option></select></div>
-                <div style="margin-top:15px;"><label>Attendance Method</label><select id="attendance"><option value="Attended Scene">Attended Scene</option><option value="Self Presented">Self Presented</option></select></div>
+                <div class="grid-2" style="margin-top: 15px;">
+                    <div class="hems-doc-only"><label>Deployment Method</label><select id="deployMethod"><option value="HEMS">HEMS (Helicopter)</option><option value="RRV">RRV (Car)</option></select></div>
+                    <div><label>Attendance Method</label><select id="attendance"><option value="Attended Scene">Attended Scene</option><option value="Self Presented">Self Presented</option></select></div>
+                </div>
             </div>
 
-            <div class="form-section" id="injurySection">
-                <h2>1. Injury Information</h2>
-                <div class="hems-doc-only" style="margin-bottom:15px;"><label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea></div>
-                <label>Primary Injury / Complaint</label><textarea id="injuryInfo" placeholder="Nature of illness/injury..."></textarea>
-                <div class="grid-2" style="margin-top:15px;">
-                    <div><label>X-Ray Performed?</label><select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="xrayDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="xrayResults" placeholder="e.g. Fractured tibia"></div></div>
-                    <div><label>MRI Performed?</label><select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="mriDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="mriResults" placeholder="e.g. Tissue damage"></div></div>
-                </div>
-                <button type="button" class="primary-btn" onclick="copyInjuryMDT(this)">📋 Copy INJURY Section</button>
-            </div>
-
-            <div class="form-section" id="treatmentSection">
-                <h2>2. Treatment & Medications</h2>
+            <div class="main-grid">
                 
-                <label style="display:flex; align-items:center; gap:10px; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 15px;">
-                    <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()" style="width:20px; margin: 0;"> 
-                    Medication Administered?
-                </label>
-                
-                <div id="medsLoggerUI" class="meds-logger">
-                    <div class="med-row">
-                        <div><label>Medication</label><select id="medSelect"></select></div>
-                        <div><label>Dosage</label><input type="text" id="medDose" placeholder="e.g. 10mg"></div>
-                        <div><label>Time</label><input type="time" id="medTime"></div>
-                        <button type="button" class="add-btn" onclick="logMedication()">Add</button>
-                    </div>
-                    <ul id="loggedMedsList" class="logged-list"></ul>
-                </div>
-
-                <div class="hart-only hart-box">
-                    <label style="color: #00b894;">Use HART Equipment?</label>
-                    <select id="hartEquipSelect" onchange="toggleHiddenDiv('hartEquipSelect', 'hartEquipDetails')"><option value="No">No</option><option value="Yes">Yes</option></select>
-                    <div id="hartEquipDetails" class="hidden-detail-box" style="background: white;">
-                        <div class="hart-row">
-                            <div><label>Select Gear</label><select id="hartEquipDropdown"><option value="Tripod">Tripod</option><option value="Basket Stretcher">Basket Stretcher</option><option value="MTFA Gear">MTFA Gear</option><option value="CBRN Gear">CBRN Gear</option><option value="Diving Gear">Diving Gear</option></select></div>
-                            <button type="button" class="add-btn" style="background:var(--accent-green)" onclick="logHart()">Add Gear</button>
-                        </div>
-                        <ul id="loggedHartList" class="logged-list"></ul>
-                    </div>
-                </div>
-
-                <div class="hems-doc-only rsi-box">
-                    <label style="color: #d63031;">Rapid Sequence Intubation (RSI) Performed?</label>
-                    <select id="rsiSelect" onchange="toggleHiddenDiv('rsiSelect', 'rsiDetails')"><option value="No">No</option><option value="Yes">Yes</option></select>
-                    <div id="rsiDetails" class="hidden-detail-box" style="background: white;">
-                        <div class="rsi-row">
-                            <div><label>RSI Medication</label><select id="rsiMedSelect">
-                                <option value="Ketamine (Induction) 10mg/1ml">Ketamine (Induction) 10mg/1ml</option>
-                                <option value="Rocuronium Bromide (Paralytic) 10mg/1ml">Rocuronium Bromide (Paralytic) 10mg/1ml</option>
-                                <option value="Midazolam (Sedation) 5mg/5ml">Midazolam (Sedation) 5mg/5ml</option>
-                            </select></div>
-                            <div><label>Time</label><input type="time" id="rsiTimeInput"></div>
-                            <button type="button" class="add-btn" style="background: #ff7675;" onclick="logRsi()">Log RSI</button>
-                        </div>
-                        <ul id="loggedRsiList" class="logged-list"></ul>
-                    </div>
-                </div>
-
-                <div class="critical-status-box">
-                    <div class="grid-2" style="margin-bottom: 15px;">
-                        <div>
-                            <label>ROLE (Recognition of Life Extinct)?</label>
-                            <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Time</label>
-                            <input type="time" id="roleTime" style="background: white;">
-                        </div>
-                    </div>
+                <div class="form-section" id="injurySection" style="margin-bottom: 0;">
+                    <h2>1. Injury Information</h2>
+                    <div class="hems-doc-only" style="margin-bottom:15px;"><label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea></div>
+                    <label>Primary Injury / Complaint</label><textarea id="injuryInfo" placeholder="Nature of illness/injury..."></textarea>
                     
-                    <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
-                        <div class="grid-2">
-                            <div>
-                                <label>Did you shock the patient?</label>
-                                <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
-                                    <option value="No">No</option>
-                                    <option value="Yes">Yes</option>
-                                </select>
-                            </div>
-                            <div id="shockCountBox" style="display: none;">
-                                <label>How many times?</label>
-                                <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
-                            </div>
+                    <div style="margin-top:15px; padding:20px; background:var(--input-bg); border-radius:var(--radius);">
+                        <div style="margin-bottom: 15px;"><label>X-Ray Performed?</label><select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="xrayDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="xrayResults" placeholder="e.g. Fractured tibia"></div></div>
+                        <div><label>MRI Performed?</label><select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="mriDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="mriResults" placeholder="e.g. Tissue damage"></div></div>
+                    </div>
+                    <button type="button" class="primary-btn" onclick="copyInjuryMDT(this)">📋 Copy INJURY Section</button>
+                </div>
+
+                <div class="form-section" id="treatmentSection" style="margin-bottom: 0;">
+                    <h2>2. Treatment & Medications</h2>
+                    
+                    <label style="display:flex; align-items:center; gap:10px; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 15px;">
+                        <input type="checkbox" id="medsToggle" onchange="toggleMedsUI()" style="width:20px; margin: 0;"> 
+                        Medication Administered?
+                    </label>
+                    
+                    <div id="medsLoggerUI" class="meds-logger">
+                        <div class="med-row">
+                            <div><label>Medication</label><select id="medSelect"></select></div>
+                            <div><label>Dosage</label><input type="text" id="medDose" placeholder="e.g. 10mg"></div>
+                            <div><label>Time</label><input type="time" id="medTime"></div>
+                            <button type="button" class="add-btn" onclick="logMedication()">Add</button>
                         </div>
-                        <div class="grid-2" style="margin-top: 15px;">
+                        <ul id="loggedMedsList" class="logged-list"></ul>
+                    </div>
+
+                    <div class="hart-only hart-box">
+                        <label style="color: #00b894;">Use HART Equipment?</label>
+                        <select id="hartEquipSelect" onchange="toggleHiddenDiv('hartEquipSelect', 'hartEquipDetails')"><option value="No">No</option><option value="Yes">Yes</option></select>
+                        <div id="hartEquipDetails" class="hidden-detail-box" style="background: white;">
+                            <div class="hart-row">
+                                <div><label>Select Gear</label><select id="hartEquipDropdown"><option value="Tripod">Tripod</option><option value="Basket Stretcher">Basket Stretcher</option><option value="MTFA Gear">MTFA Gear</option><option value="CBRN Gear">CBRN Gear</option><option value="Diving Gear">Diving Gear</option></select></div>
+                                <button type="button" class="add-btn" style="background:var(--accent-green)" onclick="logHart()">Add Gear</button>
+                            </div>
+                            <ul id="loggedHartList" class="logged-list"></ul>
+                        </div>
+                    </div>
+
+                    <div class="hems-doc-only rsi-box">
+                        <label style="color: #d63031;">Rapid Sequence Intubation (RSI) Performed?</label>
+                        <select id="rsiSelect" onchange="toggleHiddenDiv('rsiSelect', 'rsiDetails')"><option value="No">No</option><option value="Yes">Yes</option></select>
+                        <div id="rsiDetails" class="hidden-detail-box" style="background: white;">
+                            <div class="rsi-row">
+                                <div><label>RSI Medication</label><select id="rsiMedSelect">
+                                    <option value="Ketamine (Induction) 10mg/1ml">Ketamine (Induction) 10mg/1ml</option>
+                                    <option value="Rocuronium Bromide (Paralytic) 10mg/1ml">Rocuronium Bromide (Paralytic) 10mg/1ml</option>
+                                    <option value="Midazolam (Sedation) 5mg/5ml">Midazolam (Sedation) 5mg/5ml</option>
+                                </select></div>
+                                <div><label>Time</label><input type="time" id="rsiTimeInput"></div>
+                                <button type="button" class="add-btn" style="background: #ff7675;" onclick="logRsi()">Log RSI</button>
+                            </div>
+                            <ul id="loggedRsiList" class="logged-list"></ul>
+                        </div>
+                    </div>
+
+                    <div class="critical-status-box">
+                        <div class="grid-2" style="margin-bottom: 15px;">
                             <div>
-                                <label>Taken to Morgue?</label>
-                                <select id="morgueSelect">
+                                <label>ROLE (Life Extinct)?</label>
+                                <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
                                     <option value="No">No</option>
                                     <option value="Yes">Yes</option>
                                 </select>
                             </div>
                             <div>
                                 <label>Time</label>
-                                <input type="time" id="morgueTime" style="background: white;">
+                                <input type="time" id="roleTime" style="background: white;">
+                            </div>
+                        </div>
+                        
+                        <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
+                            <div class="grid-2">
+                                <div>
+                                    <label>Patient Shocked?</label>
+                                    <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div id="shockCountBox" style="display: none;">
+                                    <label>How many times?</label>
+                                    <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
+                                </div>
+                            </div>
+                            <div class="grid-2" style="margin-top: 15px;">
+                                <div>
+                                    <label>Taken to Morgue?</label>
+                                    <select id="morgueSelect">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Time</label>
+                                    <input type="time" id="morgueTime" style="background: white;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div>
+                                <label>Patient in Coma?</label>
+                                <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="comaTime" style="background: white;">
                             </div>
                         </div>
                     </div>
 
+                    <label>Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
+                    
                     <div class="grid-2">
-                        <div>
-                            <label>Patient Placed in Coma?</label>
-                            <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
-                        </div>
-                        <div>
-                            <label>Time</label>
-                            <input type="time" id="comaTime" style="background: white;">
-                        </div>
+                        <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
+                        <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
                     </div>
                 </div>
-
-                <label>Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
-                <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
-                <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
             </div>
         </div>
     </form>
@@ -278,167 +300,4 @@
             "Paracetamol IV (Mild to mod pain) 1000mg/100ml (INFUSION)", 
             "Paracetamol (Mild to mod pain) 1g (TABLET)", 
             "Prednisolone (Moderate acute asthma) 5mg (TABLET)", 
-            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)", 
-            "Sodium Chloride (Fluids) 500ml (INFUSION)", 
-            "TXA (Major trauma/blood control) 100mg/1ml (INJ)"
-        ], 
-        "Advanced Paramedic": [
-            "Ketamine (Severe pain management) 10mg/1ml (INJ)"
-        ], 
-        "HEMS": [
-            "Amoxicillin (Infections) 500mg (TABLET)", 
-            "Rocuronium Bromide (RSI Intubation) 10mg/1ml (INJ)"
-        ], 
-        "Doctor": [
-            "Co-amoxiclav (Open fracture infections) 1200mg (ORAL)", 
-            "Diazepam (Acute muscle spasms) 5mg (TABLET)"
-        ] 
-    };
-    
-    // Inherit medications upwards based on clinical grades
-    medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
-    medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
-    medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
-    medMap["HART"] = medMap["Advanced Paramedic"];
-    medMap["Junior Doctor"] = medMap["Doctor"];
-    medMap["Silver Command"] = medMap["Doctor"];
-    medMap["Gold Command"] = medMap["Doctor"];
-
-    let meds = [], hart = [], rsiLog = [];
-
-    // --- MAIN FORM LOGIC ---
-    function revealFormAndPopulateMeds() {
-        const g = document.getElementById('grade').value;
-        const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection')];
-        
-        // Universal color themes for sections based on grade
-        let borderColor = "1px solid rgba(255,255,255,0.4)";
-        if (g === "Student Paramedic") borderColor = "2px solid #74b9ff";
-        else if (g === "Paramedic") borderColor = "2px solid #0984e3";
-        else if (g === "Advanced Paramedic") borderColor = "2px solid #6c5ce7";
-        else if (g === "HEMS") borderColor = "2px solid #ff7675";
-        else if (g === "HART") borderColor = "2px solid #55efc4";
-        else if (g === "Junior Doctor") borderColor = "2px solid #00cec9";
-        else if (g === "Doctor") borderColor = "2px solid #e84393";
-        else if (g === "Silver Command") borderColor = "2px solid #b2bec3";
-        else if (g === "Gold Command") borderColor = "2px solid #fdcb6e";
-        
-        sections.forEach(s => s.style.border = borderColor);
-
-        document.getElementById('hiddenFields').style.display = "block";
-        
-        // Display toggles
-        const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor" || g === "Gold Command" || g === "Silver Command");
-        document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
-        
-        const isHart = (g === "HART" || g === "Gold Command" || g === "Silver Command");
-        document.querySelectorAll('.hart-only').forEach(el => el.style.display = isHart ? "block" : "none");
-        
-        // Populate main meds
-        const s = document.getElementById('medSelect'); s.innerHTML = "";
-        medMap[g].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
-    }
-
-    function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
-    function toggleMedsUI() { document.getElementById('medsLoggerUI').style.display = document.getElementById('medsToggle').checked ? "block" : "none"; }
-    
-    function logMedication() { 
-        const dose = document.getElementById('medDose').value || "Standard";
-        const time = document.getElementById('medTime').value || "No Time";
-        meds.push(`[${time}] ${document.getElementById('medSelect').value} (${dose})`); 
-        render(); 
-    }
-    
-    function logHart() { 
-        hart.push(document.getElementById('hartEquipDropdown').value); 
-        render(); 
-    }
-    
-    function logRsi() { 
-        const time = document.getElementById('rsiTimeInput').value || "No Time";
-        rsiLog.push(`[${time}] ${document.getElementById('rsiMedSelect').value}`); 
-        render(); 
-    }
-
-    function render() {
-        const l1 = document.getElementById('loggedMedsList');
-        const l2 = document.getElementById('loggedHartList');
-        const l3 = document.getElementById('loggedRsiList');
-        
-        l1.innerHTML = ""; meds.forEach((m, i) => l1.innerHTML += `<li>${m} <span class="delete-item" onclick="meds.splice(${i},1); render()">✖</span></li>`);
-        l2.innerHTML = ""; hart.forEach((h, i) => l2.innerHTML += `<li>${h} <span class="delete-item" onclick="hart.splice(${i},1); render()">✖</span></li>`);
-        l3.innerHTML = ""; rsiLog.forEach((r, i) => l3.innerHTML += `<li>${r} <span class="delete-item" onclick="rsiLog.splice(${i},1); render()">✖</span></li>`);
-    }
-
-    function resetForm() { 
-        if(confirm("Are you sure you want to clear the entire form?")) { 
-            document.getElementById('epcrForm').reset(); 
-            meds = []; hart = []; rsiLog = []; 
-            render(); 
-            document.getElementById('hiddenFields').style.display = "none";
-        } 
-    }
-
-    // --- COPY LOGIC ---
-    function copyInjuryMDT(btn) {
-        const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
-        const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
-        const grade = document.getElementById('grade').value;
-        const callsign = document.getElementById('callsign').value || "N/A";
-        const scene = (grade.match(/HEMS|Doctor|Gold Command|Silver Command/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
-        
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${callsign} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
-        
-        navigator.clipboard.writeText(out).then(() => {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "✅ Copy Complete!";
-            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-        });
-    }
-
-    function copyTreatmentMDT(btn) {
-        let rsiText = "";
-        if (document.getElementById('rsiSelect').value === "Yes" && rsiLog.length > 0) {
-            rsiText = `\n--- RSI ADMINISTERED ---\n${rsiLog.join('\n')}\n`;
-        }
-
-        const hEq = (hart.length > 0) ? `\n--- HART EQUIPMENT ---\n${hart.join(', ')}\n` : "";
-        const callsign = document.getElementById('callsign').value || "N/A";
-        
-        // Critical Status Additions with Shock & Morgue logic
-        let roleText = "";
-        if (document.getElementById('roleSelect').value === "Yes") {
-            roleText = `\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value || "Unknown Time"}`;
-            
-            const shocked = document.getElementById('shockSelect').value;
-            if (shocked === "Yes") {
-                const shocks = document.getElementById('shockCount').value || "0";
-                roleText += `\nSHOCKS DELIVERED: Yes (${shocks} times)`;
-            } else {
-                roleText += `\nSHOCKS DELIVERED: No`;
-            }
-
-            const morgue = document.getElementById('morgueSelect').value;
-            if (morgue === "Yes") {
-                roleText += `\nTAKEN TO MORGUE: Yes @ ${document.getElementById('morgueTime').value || "Unknown Time"}\n`;
-            } else {
-                roleText += `\nTAKEN TO MORGUE: No\n`;
-            }
-        }
-
-        let comaText = "";
-        if (document.getElementById('comaSelect').value === "Yes") {
-            comaText = `\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value || "Unknown Time"}\n`;
-        }
-
-        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${callsign} | PROVIDER: ${document.getElementById('grade').value}\n${hEq}\n--- MEDICATIONS ---\n${meds.join('\n')}\n${rsiText}${roleText}${comaText}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
-        
-        navigator.clipboard.writeText(out).then(() => {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "✅ Copy Complete!";
-            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-        });
-    }
-</script>
-</body>
-</html>
+            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB
