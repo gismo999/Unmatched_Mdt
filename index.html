@@ -103,6 +103,7 @@
                 <option value="HART">HART</option>
                 <option value="Junior Doctor">Junior Doctor</option>
                 <option value="Doctor">Doctor</option>
+                <option value="Gold Command">Gold Command</option>
             </select>
         </div>
 
@@ -242,6 +243,7 @@
     medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
     medMap["HART"] = medMap["Paramedic"];
     medMap["Junior Doctor"] = medMap["Doctor"];
+    medMap["Gold Command"] = medMap["Doctor"]; // Gold Command gets all medications
 
     let meds = [], hart = [], rsiLog = [];
 
@@ -253,14 +255,17 @@
         // Color themes for sections based on grade
         if (g === "HEMS") sections.forEach(s => s.style.border = "2px solid #ff7675");
         else if (g === "HART") sections.forEach(s => s.style.border = "2px solid #55efc4");
+        else if (g === "Gold Command") sections.forEach(s => s.style.border = "2px solid #fdcb6e");
         else sections.forEach(s => s.style.border = "1px solid rgba(255,255,255,0.4)");
 
         document.getElementById('hiddenFields').style.display = "block";
         
-        // Display toggles
-        const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor");
+        // Display toggles (Gold Command sees everything)
+        const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor" || g === "Gold Command");
         document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
-        document.querySelectorAll('.hart-only').forEach(el => el.style.display = (g === "HART") ? "block" : "none");
+        
+        const isHart = (g === "HART" || g === "Gold Command");
+        document.querySelectorAll('.hart-only').forEach(el => el.style.display = isHart ? "block" : "none");
         
         // Populate main meds
         const s = document.getElementById('medSelect'); s.innerHTML = "";
@@ -312,7 +317,7 @@
         const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
         const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
         const grade = document.getElementById('grade').value;
-        const scene = (grade.match(/HEMS|Doctor/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
+        const scene = (grade.match(/HEMS|Doctor|Gold Command/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
         
         const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
         navigator.clipboard.writeText(out).then(() => alert("Injury section copied to clipboard!"));
