@@ -16,10 +16,7 @@
             --radius: 25px;
         }
 
-        /* Universal Box Sizing fixes overhanging inputs */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
 
         body { 
             font-family: 'Inter', sans-serif; 
@@ -33,6 +30,7 @@
             max-width: 800px; margin: 0 auto; background: var(--glass-bg); 
             backdrop-filter: blur(15px); padding: 40px; border-radius: var(--radius); 
             box-shadow: 0 8px 32px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
         }
 
         .header { text-align: center; margin-bottom: 30px; }
@@ -186,7 +184,7 @@
 </div>
 
 <script>
-    // ACCURATE MEDICATION DATABASE FROM IMAGES
+    // --- ACCURATE MEDICATION DATABASE FROM IMAGES ---
     const medMap = { 
         "Student Paramedic": [
             "Oxygen (Cardiac arrest/trauma) (GAS)", 
@@ -247,6 +245,7 @@
 
     let meds = [], hart = [], rsiLog = [];
 
+    // --- MAIN FORM LOGIC ---
     function revealFormAndPopulateMeds() {
         const g = document.getElementById('grade').value;
         const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection')];
@@ -304,16 +303,18 @@
             document.getElementById('epcrForm').reset(); 
             meds = []; hart = []; rsiLog = []; 
             render(); 
-            revealFormAndPopulateMeds(); 
+            document.getElementById('hiddenFields').style.display = "none";
         } 
     }
 
+    // --- COPY LOGIC ---
     function copyInjuryMDT() {
         const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
         const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
-        const scene = (document.getElementById('grade').value.match(/HEMS|Doctor/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
+        const grade = document.getElementById('grade').value;
+        const scene = (grade.match(/HEMS|Doctor/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
         
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
         navigator.clipboard.writeText(out).then(() => alert("Injury section copied to clipboard!"));
     }
 
