@@ -207,6 +207,19 @@
                                 <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
                             </div>
                         </div>
+                        <div class="grid-2" style="margin-top: 15px;">
+                            <div>
+                                <label>Taken to Morgue?</label>
+                                <select id="morgueSelect">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="morgueTime" style="background: white;">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="grid-2">
@@ -298,12 +311,19 @@
         const g = document.getElementById('grade').value;
         const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection')];
         
-        // Color themes for sections based on grade
-        if (g === "HEMS") sections.forEach(s => s.style.border = "2px solid #ff7675");
-        else if (g === "HART") sections.forEach(s => s.style.border = "2px solid #55efc4");
-        else if (g === "Gold Command") sections.forEach(s => s.style.border = "2px solid #fdcb6e");
-        else if (g === "Silver Command") sections.forEach(s => s.style.border = "2px solid #b2bec3");
-        else sections.forEach(s => s.style.border = "1px solid rgba(255,255,255,0.4)");
+        // Universal color themes for sections based on grade
+        let borderColor = "1px solid rgba(255,255,255,0.4)";
+        if (g === "Student Paramedic") borderColor = "2px solid #74b9ff";
+        else if (g === "Paramedic") borderColor = "2px solid #0984e3";
+        else if (g === "Advanced Paramedic") borderColor = "2px solid #6c5ce7";
+        else if (g === "HEMS") borderColor = "2px solid #ff7675";
+        else if (g === "HART") borderColor = "2px solid #55efc4";
+        else if (g === "Junior Doctor") borderColor = "2px solid #00cec9";
+        else if (g === "Doctor") borderColor = "2px solid #e84393";
+        else if (g === "Silver Command") borderColor = "2px solid #b2bec3";
+        else if (g === "Gold Command") borderColor = "2px solid #fdcb6e";
+        
+        sections.forEach(s => s.style.border = borderColor);
 
         document.getElementById('hiddenFields').style.display = "block";
         
@@ -364,9 +384,10 @@
         const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
         const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
         const grade = document.getElementById('grade').value;
+        const callsign = document.getElementById('callsign').value || "N/A";
         const scene = (grade.match(/HEMS|Doctor|Gold Command|Silver Command/)) ? `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\n` : "\n\n";
         
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${callsign} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
         
         navigator.clipboard.writeText(out).then(() => {
             const originalText = btn.innerHTML;
@@ -382,17 +403,26 @@
         }
 
         const hEq = (hart.length > 0) ? `\n--- HART EQUIPMENT ---\n${hart.join(', ')}\n` : "";
+        const callsign = document.getElementById('callsign').value || "N/A";
         
-        // Critical Status Additions with Shock logic
+        // Critical Status Additions with Shock & Morgue logic
         let roleText = "";
         if (document.getElementById('roleSelect').value === "Yes") {
             roleText = `\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value || "Unknown Time"}`;
+            
             const shocked = document.getElementById('shockSelect').value;
             if (shocked === "Yes") {
                 const shocks = document.getElementById('shockCount').value || "0";
-                roleText += `\nSHOCKS DELIVERED: Yes (${shocks} times)\n`;
+                roleText += `\nSHOCKS DELIVERED: Yes (${shocks} times)`;
             } else {
-                roleText += `\nSHOCKS DELIVERED: No\n`;
+                roleText += `\nSHOCKS DELIVERED: No`;
+            }
+
+            const morgue = document.getElementById('morgueSelect').value;
+            if (morgue === "Yes") {
+                roleText += `\nTAKEN TO MORGUE: Yes @ ${document.getElementById('morgueTime').value || "Unknown Time"}\n`;
+            } else {
+                roleText += `\nTAKEN TO MORGUE: No\n`;
             }
         }
 
@@ -401,7 +431,7 @@
             comaText = `\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value || "Unknown Time"}\n`;
         }
 
-        const out = `*** ePCR: TREATMENT REPORT ***\nPROVIDER: ${document.getElementById('grade').value}\n${hEq}\n--- MEDICATIONS ---\n${meds.join('\n')}\n${rsiText}${roleText}${comaText}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
+        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${callsign} | PROVIDER: ${document.getElementById('grade').value}\n${hEq}\n--- MEDICATIONS ---\n${meds.join('\n')}\n${rsiText}${roleText}${comaText}\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
         
         navigator.clipboard.writeText(out).then(() => {
             const originalText = btn.innerHTML;
