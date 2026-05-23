@@ -195,28 +195,66 @@
 
                     <div class="critical-status-box">
                         <div class="grid-2" style="margin-bottom: 15px;">
-                            <div><label>ROLE (Life Extinct)?</label><select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                            <div><label>Time</label><input type="time" id="roleTime" style="background: white;"></div>
+                            <div>
+                                <label>ROLE (Recognition of Life Extinct)?</label>
+                                <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="roleTime" style="background: white;">
+                            </div>
                         </div>
+                        
                         <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
                             <div class="grid-2">
-                                <div><label>Patient Shocked?</label><select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                                <div id="shockCountBox" style="display: none;"><label>How many times?</label><input type="number" id="shockCount" min="1" placeholder="e.g. 3"></div>
+                                <div>
+                                    <label>Patient Shocked?</label>
+                                    <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div id="shockCountBox" style="display: none;">
+                                    <label>How many times?</label>
+                                    <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
+                                </div>
                             </div>
                             <div class="grid-2" style="margin-top: 15px;">
-                                <div><label>Taken to Morgue?</label><select id="morgueSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                                <div><label>Time</label><input type="time" id="morgueTime" style="background: white;"></div>
+                                <div>
+                                    <label>Taken to Morgue?</label>
+                                    <select id="morgueSelect">
+                                        <option value="No">No</option>
+                                        <option value="Yes">Yes</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Time</label>
+                                    <input type="time" id="morgueTime" style="background: white;">
+                                </div>
                             </div>
                         </div>
+
                         <div class="grid-2">
-                            <div><label>Patient in Coma?</label><select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                            <div><label>Time</label><input type="time" id="comaTime" style="background: white;"></div>
+                            <div>
+                                <label>Patient Placed in Coma?</label>
+                                <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
+                            </div>
+                            <div>
+                                <label>Time</label>
+                                <input type="time" id="comaTime" style="background: white;">
+                            </div>
                         </div>
                     </div>
 
                     <label>Treatment Notes</label><textarea id="treatmentNotes" placeholder="General care, transport details..."></textarea>
-                    <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
-                    <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
+                    
+                    <div class="grid-2">
+                        <button type="button" class="primary-btn success-btn" onclick="copyTreatmentMDT(this)">📋 Copy TREATMENT Section</button>
+                        <button type="button" class="primary-btn reset-btn" onclick="resetForm()">🔄 Reset Form</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -225,12 +263,58 @@
 
 <script>
     const medMap = { 
-        "Student Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Aspirin (Suspected heart attack) 300mg (TABLET)", "Codeine [supervised] (Mild to severe pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", "Ibuprofen (Mild to mod pain) 400mg (TABLET)", "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", "Paracetamol (Mild to mod pain) 1g (TABLET)", "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)"], 
-        "Paramedic": ["Oxygen (Cardiac arrest/trauma) (GAS)", "Adrenaline (Cardiac arrest) 1mg/10ml (INJ)", "Amiodarone (Pulseless VT only) 300mg/10ml (INJ)", "Aspirin (Suspected heart attack) 300mg (TABLET)", "Atropine Sulfate (<40 pulse symptomatic) 600mcg (INJ)", "Chlorphenamine (Allergic reaction) 10mg/1ml (INJ)", "Codeine (Mild to severe pain) 15mg (TABLET)", "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", "Ibuprofen (Mild to mod pain) 400mg (TABLET)", "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", "Metoclopramide (Nausea/vomiting) 10mg/2ml (INJ)", "Midazolam (Seizure control) 5mg/5ml (INJ)", "Morphine Sulfate (Moderate pain) 10mg/1ml (INJ)", "Naloxone IV (Drug overdose) 400mcg/1ml (INJ)", "Naloxone IM (Drug overdose) 400mcg/1ml (INJ)", "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", "Paracetamol IV (Mild to mod pain) 1000mg/100ml (INFUSION)", "Paracetamol (Mild to mod pain) 1g (TABLET)", "Prednisolone (Moderate acute asthma) 5mg (TABLET)", "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)", "Sodium Chloride (Fluids) 500ml (INFUSION)", "TXA (Major trauma/blood control) 100mg/1ml (INJ)"], 
-        "Advanced Paramedic": ["Ketamine (Severe pain management) 10mg/1ml (INJ)"], 
-        "HEMS": ["Amoxicillin (Infections) 500mg (TABLET)", "Rocuronium Bromide (RSI Intubation) 10mg/1ml (INJ)"], 
-        "Doctor": ["Co-amoxiclav (Open fracture infections) 1200mg (ORAL)", "Diazepam (Acute muscle spasms) 5mg (TABLET)"] 
+        "Student Paramedic": [
+            "Oxygen (Cardiac arrest/trauma) (GAS)", 
+            "Aspirin (Suspected heart attack) 300mg (TABLET)", 
+            "Codeine [supervised] (Mild to severe pain) 15mg (TABLET)", 
+            "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", 
+            "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", 
+            "Ibuprofen (Mild to mod pain) 400mg (TABLET)", 
+            "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", 
+            "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", 
+            "Paracetamol (Mild to mod pain) 1g (TABLET)", 
+            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)"
+        ], 
+        "Paramedic": [
+            "Oxygen (Cardiac arrest/trauma) (GAS)", 
+            "Adrenaline (Cardiac arrest) 1mg/10ml (INJ)", 
+            "Amiodarone (Pulseless VT only) 300mg/10ml (INJ)", 
+            "Aspirin (Suspected heart attack) 300mg (TABLET)", 
+            "Atropine Sulfate (<40 pulse symptomatic) 600mcg (INJ)", 
+            "Chlorphenamine (Allergic reaction) 10mg/1ml (INJ)", 
+            "Codeine (Mild to severe pain) 15mg (TABLET)", 
+            "Glucose (Hypoglycemia) 50g/500ml (INFUSION)", 
+            "GTN (Cardiac chest pain/Angina) 400mcg/spray (INHALER)", 
+            "Ibuprofen (Mild to mod pain) 400mg (TABLET)", 
+            "Ipratropium Bromide (Life threatening asthma/COPD) 250mcg/3ml (NEB)", 
+            "Metoclopramide (Nausea/vomiting) 10mg/2ml (INJ)", 
+            "Midazolam (Seizure control) 5mg/5ml (INJ)", 
+            "Morphine Sulfate (Moderate pain) 10mg/1ml (INJ)", 
+            "Naloxone IV (Drug overdose) 400mcg/1ml (INJ)", 
+            "Naloxone IM (Drug overdose) 400mcg/1ml (INJ)", 
+            "Naproxen (Acute/chronic MSK pain) 250mg (TABLET)", 
+            "Paracetamol IV (Mild to mod pain) 1000mg/100ml (INFUSION)", 
+            "Paracetamol (Mild to mod pain) 1g (TABLET)", 
+            "Prednisolone (Moderate acute asthma) 5mg (TABLET)", 
+            "Salbutamol (Asthma attack/COPD) 2.5mg/2.5ml (NEB)", 
+            "Sodium Chloride (Fluids) 500ml (INFUSION)", 
+            "TXA (Major trauma/blood control) 100mg/1ml (INJ)"
+        ], 
+        "Advanced Paramedic": [
+            "Ketamine (Severe pain management) 10mg/1ml (INJ)"
+        ], 
+        "HEMS": [
+            "Amoxicillin (Infections) 500mg (TABLET)", 
+            "Fentanyl (Pain relief) 50mcg/1ml (INJ)",
+            "Rocuronium Bromide (RSI Intubation) 10mg/1ml (INJ)"
+        ], 
+        "Doctor": [
+            "Co-amoxiclav (Open fracture infections) 1200mg (ORAL)", 
+            "Diazepam (Acute muscle spasms) 5mg (TABLET)"
+        ] 
     };
+    
+    // Inherit medications upwards
     medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
     medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
     medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
@@ -274,17 +358,66 @@
         l2.innerHTML = ""; hart.forEach((h, i) => l2.innerHTML += `<li>${h} <span class="delete-item" onclick="hart.splice(${i},1); render()">✖</span></li>`);
         l3.innerHTML = ""; rsiLog.forEach((r, i) => l3.innerHTML += `<li>${r} <span class="delete-item" onclick="rsiLog.splice(${i},1); render()">✖</span></li>`);
     }
-    function resetForm() { if(confirm("Clear entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; rsiLog = []; render(); document.getElementById('hiddenFields').style.display = "none"; document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)"; } }
+    function resetForm() { if(confirm("Are you sure you want to clear the entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; rsiLog = []; render(); document.getElementById('hiddenFields').style.display = "none"; document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)"; } }
+    
     function copyInjuryMDT(btn) {
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${document.getElementById('callsign').value} | GRADE: ${document.getElementById('grade').value} | DATE: ${document.getElementById('date').value}\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value}\n\nPRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${document.getElementById('xraySelect').value === "Yes" ? document.getElementById('xrayResults').value : "No"}\nMRI: ${document.getElementById('mriSelect').value === "Yes" ? document.getElementById('mriResults').value : "No"}`;
-        navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
+        const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
+        const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
+        const grade = document.getElementById('grade').value;
+        const callsign = document.getElementById('callsign').value || "N/A";
+        const scene = `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value || "N/A"}\n\n`;
+        
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${callsign} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
+        
+        navigator.clipboard.writeText(out).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Copy Complete!";
+            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+        });
     }
+
     function copyTreatmentMDT(btn) {
-        const rsi = (document.getElementById('rsiSelect').value === "Yes") ? `\n\n--- RSI ADMINISTERED ---\n${rsiLog.join('\n')}` : "";
-        const role = (document.getElementById('roleSelect').value === "Yes") ? `\n\n--- CRITICAL STATUS ---\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value}\nSHOCKS DELIVERED: ${document.getElementById('shockSelect').value === "Yes" ? document.getElementById('shockCount').value : "No"}\nTAKEN TO MORGUE: ${document.getElementById('morgueSelect').value} @ ${document.getElementById('morgueTime').value}` : "";
-        const coma = (document.getElementById('comaSelect').value === "Yes") ? `\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value}` : "";
-        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${document.getElementById('callsign').value} | PROVIDER: ${document.getElementById('grade').value}\n${(hart.length > 0) ? `\n\n--- HART EQUIPMENT ---\n${hart.join(', ')}` : ""}\n\n--- MEDICATIONS ---\n${meds.length > 0 ? meds.join('\n') : "None"}${rsi}${role}${coma}\n\n--- NOTES ---\n${document.getElementById('treatmentNotes').value}`;
-        navigator.clipboard.writeText(out).then(() => { const o = btn.innerHTML; btn.innerHTML = "✅ Copy Complete!"; setTimeout(() => btn.innerHTML = o, 2000); });
+        let rsiText = "";
+        if (document.getElementById('rsiSelect').value === "Yes" && rsiLog.length > 0) {
+            rsiText = `\n\n--- RSI ADMINISTERED ---\n${rsiLog.join('\n')}`;
+        }
+
+        const hEq = (hart.length > 0) ? `\n\n--- HART EQUIPMENT ---\n${hart.join(', ')}` : "";
+        const callsign = document.getElementById('callsign').value || "N/A";
+        
+        // Critical Status Additions with Shock & Morgue logic
+        let roleText = "";
+        if (document.getElementById('roleSelect').value === "Yes") {
+            roleText = `\n\n--- CRITICAL STATUS ---\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value || "Unknown Time"}`;
+            
+            const shocked = document.getElementById('shockSelect').value;
+            if (shocked === "Yes") {
+                const shocks = document.getElementById('shockCount').value || "0";
+                roleText += `\nSHOCKS DELIVERED: Yes (${shocks} times)`;
+            } else {
+                roleText += `\nSHOCKS DELIVERED: No`;
+            }
+
+            const morgue = document.getElementById('morgueSelect').value;
+            if (morgue === "Yes") {
+                roleText += `\nTAKEN TO MORGUE: Yes @ ${document.getElementById('morgueTime').value || "Unknown Time"}`;
+            } else {
+                roleText += `\nTAKEN TO MORGUE: No`;
+            }
+        }
+
+        let comaText = "";
+        if (document.getElementById('comaSelect').value === "Yes") {
+            comaText = `\n\nPATIENT PLACED IN COMA: Yes @ ${document.getElementById('comaTime').value || "Unknown Time"}`;
+        }
+
+        const out = `*** ePCR: TREATMENT REPORT ***\nUNIT: ${callsign} | PROVIDER: ${document.getElementById('grade').value}\n${hEq}\n\n--- MEDICATIONS ---\n${meds.length > 0 ? meds.join('\n') : "None"}${rsiText}${roleText}${comaText}\n\n--- NOTES ---\n${document.getElementById('treatmentNotes').value || "No additional notes."}`;
+        
+        navigator.clipboard.writeText(out).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Copy Complete!";
+            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+        });
     }
 </script>
 </body>
