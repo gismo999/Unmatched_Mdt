@@ -110,6 +110,14 @@
                 <option value="Silver Command">Silver Command</option>
                 <option value="Gold Command">Gold Command</option>
             </select>
+            
+            <div id="hartSubSelect" style="display:none; margin-top: 15px;">
+                <label style="text-align: center;">HART Qualification Scope</label>
+                <select id="hartGrade" onchange="revealFormAndPopulateMeds()" style="max-width: 400px; display: block; margin: 0 auto; background: white;">
+                    <option value="Paramedic">HART Paramedic</option>
+                    <option value="Advanced Paramedic">HART Advanced Paramedic</option>
+                </select>
+            </div>
         </div>
 
         <div id="hiddenFields">
@@ -187,57 +195,22 @@
 
                     <div class="critical-status-box">
                         <div class="grid-2" style="margin-bottom: 15px;">
-                            <div>
-                                <label>ROLE (Life Extinct)?</label>
-                                <select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')">
-                                    <option value="No">No</option>
-                                    <option value="Yes">Yes</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Time</label>
-                                <input type="time" id="roleTime" style="background: white;">
-                            </div>
+                            <div><label>ROLE (Life Extinct)?</label><select id="roleSelect" onchange="toggleHiddenDiv('roleSelect', 'roleDetails')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                            <div><label>Time</label><input type="time" id="roleTime" style="background: white;"></div>
                         </div>
-                        
                         <div id="roleDetails" class="hidden-detail-box" style="background: white; border: 1px solid #ccc; margin-top: 0; margin-bottom: 15px;">
                             <div class="grid-2">
-                                <div>
-                                    <label>Did you shock the patient?</label>
-                                    <select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                                <div id="shockCountBox" style="display: none;">
-                                    <label>How many times?</label>
-                                    <input type="number" id="shockCount" min="1" placeholder="e.g. 3">
-                                </div>
+                                <div><label>Patient Shocked?</label><select id="shockSelect" onchange="toggleHiddenDiv('shockSelect', 'shockCountBox')"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                                <div id="shockCountBox" style="display: none;"><label>How many times?</label><input type="number" id="shockCount" min="1" placeholder="e.g. 3"></div>
                             </div>
                             <div class="grid-2" style="margin-top: 15px;">
-                                <div>
-                                    <label>Taken to Morgue?</label>
-                                    <select id="morgueSelect">
-                                        <option value="No">No</option>
-                                        <option value="Yes">Yes</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label>Time</label>
-                                    <input type="time" id="morgueTime" style="background: white;">
-                                </div>
+                                <div><label>Taken to Morgue?</label><select id="morgueSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                                <div><label>Time</label><input type="time" id="morgueTime" style="background: white;"></div>
                             </div>
                         </div>
-
                         <div class="grid-2">
-                            <div>
-                                <label>Patient Placed in Coma?</label>
-                                <select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select>
-                            </div>
-                            <div>
-                                <label>Time</label>
-                                <input type="time" id="comaTime" style="background: white;">
-                            </div>
+                            <div><label>Patient in Coma?</label><select id="comaSelect"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                            <div><label>Time</label><input type="time" id="comaTime" style="background: white;"></div>
                         </div>
                     </div>
 
@@ -261,7 +234,6 @@
     medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
     medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
     medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
-    medMap["HART"] = medMap["Advanced Paramedic"];
     medMap["Junior Doctor"] = medMap["Doctor"];
     medMap["Silver Command"] = medMap["Doctor"];
     medMap["Gold Command"] = medMap["Doctor"];
@@ -270,17 +242,25 @@
 
     function revealFormAndPopulateMeds() {
         const g = document.getElementById('grade').value;
+        const hartSub = document.getElementById('hartSubSelect');
         const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection'), document.getElementById('mainSection')];
+        
+        // Show sub-selector for HART
+        hartSub.style.display = (g === "HART") ? "block" : "none";
+        const effectiveGrade = (g === "HART") ? document.getElementById('hartGrade').value : g;
+
         let borderColor = "1px solid rgba(255,255,255,0.4)";
         const colors = {"Student Paramedic": "#74b9ff", "Paramedic": "#0984e3", "Advanced Paramedic": "#6c5ce7", "HEMS": "#ff7675", "HART": "#55efc4", "Junior Doctor": "#00cec9", "Doctor": "#e84393", "Silver Command": "#b2bec3", "Gold Command": "#fdcb6e"};
         if(colors[g]) borderColor = "2px solid " + colors[g];
         sections.forEach(s => s.style.border = borderColor);
+
         document.getElementById('hiddenFields').style.display = "block";
         const isHD = (g === "HEMS" || g === "Junior Doctor" || g === "Doctor" || g === "Gold Command" || g === "Silver Command");
         document.querySelectorAll('.hems-doc-only').forEach(el => el.style.display = isHD ? "block" : "none");
         document.querySelectorAll('.hart-only').forEach(el => el.style.display = (g === "HART" || g === "Gold Command" || g === "Silver Command") ? "block" : "none");
+        
         const s = document.getElementById('medSelect'); s.innerHTML = "";
-        medMap[g].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
+        medMap[effectiveGrade].sort().forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; s.appendChild(o); });
     }
 
     function toggleHiddenDiv(s, d) { document.getElementById(d).style.display = (document.getElementById(s).value === "Yes") ? "block" : "none"; }
