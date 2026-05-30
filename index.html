@@ -136,10 +136,53 @@
             <div class="main-grid">
                 <div class="form-section" id="injurySection" style="margin-bottom: 0;">
                     <h2>1. Injury Information</h2>
-                    <div class="hems-doc-only" style="margin-bottom:15px;"><label>Scene Findings</label><textarea id="sceneFindings" placeholder="Details found on arrival..."></textarea></div>
+                    
+                    <!-- NEW HEMS SCENE FINDINGS SECTION -->
+                    <div class="hems-doc-only" style="margin-bottom:15px; padding: 20px; background: rgba(0,0,0,0.03); border-radius: 20px; border: 1px solid rgba(0,0,0,0.05);">
+                        <h3 style="margin-top:0; font-size: 1.1em; color: #333; margin-bottom: 15px;">Scene Findings</h3>
+                        
+                        <div class="grid-2" style="margin-bottom: 15px;">
+                            <div><label>Location -</label><input type="text" id="sceneLocation" placeholder="Enter location..."></div>
+                            <div><label>Clinical Scene Command -</label><input type="text" id="sceneCommand" placeholder="Who is command?"></div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label>Original Call Information -</label>
+                            <textarea id="originalCall" placeholder="Dispatch details..." style="height: 60px;"></textarea>
+                        </div>
+
+                        <div class="grid-2" style="margin-bottom: 15px;">
+                            <div>
+                                <label>Major Incident?</label>
+                                <select id="majorIncidentSelect" onchange="toggleHiddenDiv('majorIncidentSelect', 'majorIncidentDetails')">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                                <div id="majorIncidentDetails" class="hidden-detail-box" style="margin-top: 10px; background: white;">
+                                    <label>Major Incident Details:</label>
+                                    <input type="text" id="majorIncidentDesc" placeholder="Specify details...">
+                                </div>
+                            </div>
+                            <div>
+                                <label>Tactical Commander Present?</label>
+                                <select id="tacticalSelect" onchange="toggleHiddenDiv('tacticalSelect', 'tacticalDetails')">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                                <div id="tacticalDetails" class="hidden-detail-box" style="margin-top: 10px; background: white;">
+                                    <label>Who is Tactical Commander?</label>
+                                    <input type="text" id="tacticalName" placeholder="Commander name...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <label>Additional Scene Findings</label>
+                        <textarea id="sceneFindings" placeholder="Other details found on arrival..."></textarea>
+                    </div>
+                    
                     <label>Primary Injury / Complaint</label><textarea id="injuryInfo" placeholder="Nature of illness/injury..."></textarea>
                     
-                    <div style="margin-top:15px; padding:20px; background:var(--input-bg); border-radius:var(--radius);">
+                    <div style="margin-top:15px; padding:20px; background: rgba(255,255,255,0.4); border-radius:var(--radius);">
                         <div style="margin-bottom: 15px;"><label>X-Ray Performed?</label><select id="xraySelect" onchange="toggleHiddenDiv('xraySelect', 'xrayDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="xrayDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="xrayResults" placeholder="e.g. Fractured tibia"></div></div>
                         <div><label>MRI Performed?</label><select id="mriSelect" onchange="toggleHiddenDiv('mriSelect', 'mriDetails')"><option value="No">No</option><option value="Yes">Yes</option></select><div id="mriDetails" class="hidden-detail-box"><label>Findings:</label><input type="text" id="mriResults" placeholder="e.g. Tissue damage"></div></div>
                     </div>
@@ -314,7 +357,6 @@
         ] 
     };
     
-    // Inherit medications upwards
     medMap["Advanced Paramedic"] = medMap["Paramedic"].concat(medMap["Advanced Paramedic"]);
     medMap["HEMS"] = medMap["Advanced Paramedic"].concat(medMap["HEMS"]);
     medMap["Doctor"] = medMap["HEMS"].concat(medMap["Doctor"]);
@@ -329,7 +371,6 @@
         const hartSub = document.getElementById('hartSubSelect');
         const sections = [document.getElementById('incidentSection'), document.getElementById('injurySection'), document.getElementById('treatmentSection'), document.getElementById('mainSection')];
         
-        // Show sub-selector for HART
         hartSub.style.display = (g === "HART") ? "block" : "none";
         const effectiveGrade = (g === "HART") ? document.getElementById('hartGrade').value : g;
 
@@ -358,16 +399,42 @@
         l2.innerHTML = ""; hart.forEach((h, i) => l2.innerHTML += `<li>${h} <span class="delete-item" onclick="hart.splice(${i},1); render()">✖</span></li>`);
         l3.innerHTML = ""; rsiLog.forEach((r, i) => l3.innerHTML += `<li>${r} <span class="delete-item" onclick="rsiLog.splice(${i},1); render()">✖</span></li>`);
     }
-    function resetForm() { if(confirm("Are you sure you want to clear the entire form?")) { document.getElementById('epcrForm').reset(); meds = []; hart = []; rsiLog = []; render(); document.getElementById('hiddenFields').style.display = "none"; document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)"; } }
     
+    function resetForm() { 
+        if(confirm("Are you sure you want to clear the entire form?")) { 
+            document.getElementById('epcrForm').reset(); 
+            meds = []; hart = []; rsiLog = []; 
+            render(); 
+            document.getElementById('hiddenFields').style.display = "none"; 
+            document.getElementById('mainSection').style.border = "1px solid rgba(255,255,255,0.4)";
+            document.querySelectorAll('.hidden-detail-box').forEach(el => el.style.display = "none");
+        } 
+    }
+
     function copyInjuryMDT(btn) {
         const xray = (document.getElementById('xraySelect').value === "Yes") ? document.getElementById('xrayResults').value : "No";
         const mri = (document.getElementById('mriSelect').value === "Yes") ? document.getElementById('mriResults').value : "No";
         const grade = document.getElementById('grade').value;
         const callsign = document.getElementById('callsign').value || "N/A";
-        const scene = `\n\nSCENE FINDINGS:\n${document.getElementById('sceneFindings').value || "N/A"}\n\n`;
         
-        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${callsign} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${scene}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
+        let sceneText = "\n\n";
+        if (grade.match(/HEMS|Doctor|Gold Command|Silver Command/)) {
+            const loc = document.getElementById('sceneLocation').value || "N/A";
+            const callInfo = document.getElementById('originalCall').value || "N/A";
+            const sceneCmd = document.getElementById('sceneCommand').value || "N/A";
+            
+            let majorInc = document.getElementById('majorIncidentSelect').value;
+            if(majorInc === "Yes") majorInc += ` (${document.getElementById('majorIncidentDesc').value || "No details provided"})`;
+            
+            let tactCmd = document.getElementById('tacticalSelect').value;
+            if(tactCmd === "Yes") tactCmd += ` (${document.getElementById('tacticalName').value || "Unknown"})`;
+            
+            const extra = document.getElementById('sceneFindings').value || "None";
+            
+            sceneText = `\n\n--- SCENE FINDINGS ---\nLocation: ${loc}\nOriginal Call Info: ${callInfo}\nMajor Incident: ${majorInc}\nClinical Scene Command: ${sceneCmd}\nTactical Commander: ${tactCmd}\nAdditional Findings: ${extra}\n\n`;
+        }
+        
+        const out = `*** ePCR: INJURY REPORT ***\nUNIT: ${callsign} | GRADE: ${grade} | DATE: ${document.getElementById('date').value}${sceneText}PRIMARY COMPLAINT:\n${document.getElementById('injuryInfo').value}\n\n--- IMAGING ---\nX-RAY: ${xray}\nMRI: ${mri}`;
         
         navigator.clipboard.writeText(out).then(() => {
             const originalText = btn.innerHTML;
@@ -385,7 +452,7 @@
         const hEq = (hart.length > 0) ? `\n\n--- HART EQUIPMENT ---\n${hart.join(', ')}` : "";
         const callsign = document.getElementById('callsign').value || "N/A";
         
-        // Critical Status Additions with Shock & Morgue logic
+        // Critical Status Additions
         let roleText = "";
         if (document.getElementById('roleSelect').value === "Yes") {
             roleText = `\n\n--- CRITICAL STATUS ---\nROLE (Recognition of Life Extinct): Confirmed @ ${document.getElementById('roleTime').value || "Unknown Time"}`;
